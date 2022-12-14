@@ -6,6 +6,7 @@ public class SepetOgesi
 {
     public int Id { get; set; }
 
+    public int UrunId { get; set; }
     public Urun Urun { get; set; }
 
     public int Adet { get; set; } = 1;

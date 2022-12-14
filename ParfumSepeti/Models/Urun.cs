@@ -12,7 +12,8 @@ public class Urun
 
     public string Model { get; set; }
 
-    public string KategoriId { get; set; }
+    public string KategoriIsmi { get; set; }
+    [ForeignKey(nameof(KategoriIsmi))]
     public Kategori Kategori { get; set; }
 
     [Column(TypeName = "decimal(10,2)")]
@@ -27,8 +28,6 @@ public class Urun
     public string KapakUrl { get; set; }
 
     public List<Kullanici> Isteyenler { get; set; }
-
-    public List<Siparis> Siparisler { get; set; }
 
     public List<SepetOgesi> SepetOgeleri { get; set; }
 }

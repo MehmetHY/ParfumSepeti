@@ -6,7 +6,8 @@ public class Siparis
 {
     public int Id { get; set; }
 
-    public Kullanici Kullanici { get; set; }
+    public string? KullaniciId { get; set; }
+    public Kullanici? Kullanici { get; set; }
 
     public List<SiparisOgesi> Ogeler { get; set; }
 
