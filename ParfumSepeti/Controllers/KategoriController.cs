@@ -41,6 +41,33 @@ public class KategoriController : Controller
         return View(model);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Sil(string kategori)
+    {
+        var result = await _kategoriManager.GetSilVMAsync(kategori);
+
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest(result.ToString());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Sil(KategoriSilVM model)
+    {
+        var result = await _kategoriManager.RemoveAsync(model);
+
+        if (result.Success)
+        {
+            await _kategoriManager.SaveAsync();
+
+            return RedirectToAction(nameof(Listele));
+        }
+
+        return BadRequest(result.ToString());
+    }
+
     #region API
     [AcceptVerbs("GET", "POST")]
     public async Task<JsonResult> KategoriAvailable(string isim)

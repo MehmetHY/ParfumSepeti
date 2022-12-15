@@ -44,4 +44,47 @@ public class KategoriManager : Manager<Kategori>
 
         await AddAsync(kategori);
     }
+
+    public async Task<Result<KategoriSilVM>> GetSilVMAsync(string isim)
+    {
+        var kategori = await GetFirstOrDefaultAsync(filter: k => k.Isim == isim,
+                                                    include: k => k.Urunler,
+                                                    tracked: false);
+
+        if (kategori == null)
+            return new()
+            {
+                Success = false,
+                Errors = { "Geçersiz kategori" }
+            };
+
+        var model = new KategoriSilVM
+        {
+            Isim = kategori.Isim,
+            UrunSayisi = kategori.Urunler.Count
+        };
+
+        return new()
+        {
+            Object = model
+        };
+    }
+
+    public async Task<Result> RemoveAsync(KategoriSilVM model)
+    {
+        var kategori = await GetFirstOrDefaultAsync(
+            k => k.Isim == (model.Isim ?? string.Empty)
+        );
+
+        if (kategori == null)
+            return new Result
+            {
+                Success = false,
+                Errors = { "Geçersiz kategori" }
+            };
+
+        Remove(kategori);
+
+        return new();
+    }
 }

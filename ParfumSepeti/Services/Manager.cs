@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ParfumSepeti.Data;
 using System.Linq.Expressions;
-using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace ParfumSepeti.Services;
 
@@ -86,6 +84,12 @@ public abstract class Manager<TEntity> where TEntity : class
         bool tracked = true
     )
         => await GetQueryable(filter, include, tracked).FirstOrDefaultAsync();
+    
+    public async Task<TEntity?> GetFirstOrDefaultAsync(
+        Expression<Func<TEntity, bool>> filter,
+        bool tracked = true
+    )
+        => await GetQueryable(filter, tracked).FirstOrDefaultAsync();
 
 
     public async Task AddAsync(TEntity entity)

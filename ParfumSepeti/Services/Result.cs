@@ -23,6 +23,8 @@ public class Result
     public bool Success { get; set; }
 
     public List<string> Errors { get; set; }
+
+    public override string? ToString() => string.Join(", ", Errors);
 }
 
 public class Result<T> : Result
