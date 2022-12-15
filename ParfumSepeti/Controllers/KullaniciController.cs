@@ -73,6 +73,16 @@ public class KullaniciController : Controller
         return View(model);
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Cikis()
+    {
+        if (_signInManager.IsSignedIn(User))
+            await _signInManager.SignOutAsync();
+
+        return RedirectToAction(nameof(Giris));
+    }
+
     #region API
     [AcceptVerbs("GET", "POST")]
     public async Task<JsonResult> UserNameAvailable(string kullaniciAdi)

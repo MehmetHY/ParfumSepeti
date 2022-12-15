@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@inject SignInManager<Kullanici> signInManager
+@inject UserManager<Kullanici> userManager
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -32,6 +35,21 @@
         </form>
 
         <div id="header-menu">
+            @if (signInManager.IsSignedIn(User))
+            {
+                <form method="post" class="hbox jc-s ai-s" asp-action="Cikis" asp-controller="Kullanici">
+                    <button type="submit" class="nav-link text-l ph16">Çıkış</button>
+                </form>
+            }
+            else
+            {
+                <a class="nav-link text-l ph16 hbox ai-c jc-c" asp-action="Giris" asp-controller="Kullanici">Giriş</a>
+                <a class="nav-link text-l ph16 hbox ai-c jc-c" asp-action="Kaydol" asp-controller="Kullanici">Kaydol</a>
+            }
+            @if (User.IsInRole("admin"))
+            {
+                <a class="nav-link text-l ph16 hbox ai-c jc-c" asp-action="Panel" asp-controller="Admin">Admin</a>
+            }
             <button class="fa fa-user nav-link text-l ph16"></button>
             <button class="fa fa-cart-shopping nav-link text-l ph16"></button>
         </div>

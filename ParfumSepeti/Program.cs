@@ -32,6 +32,15 @@ builder.Services.AddIdentity<Kullanici, IdentityRole>(options =>
     .AddEntityFrameworkStores<AppDbContext>();
 
 
+// cookies
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Kullanici/Giris";
+    options.LogoutPath = "/Kullanici/Cikis";
+    options.AccessDeniedPath = "/Kullanici/ErisimEngellendi";
+});
+
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
