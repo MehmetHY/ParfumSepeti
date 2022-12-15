@@ -57,11 +57,17 @@ public class KullaniciController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Giris(GirisVM model)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Giris(GirisVM model, string? returnUrl)
     {
         if (ModelState.IsValid)
         {
+            var result = await _signInManager.SignInAsync(_userManager, model);
 
+            if (result.Success)
+                return LocalRedirect(returnUrl ?? "/");
+
+            ModelState.AddResultErrors(result);
         }
 
         return View(model);

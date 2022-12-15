@@ -1,7 +1,7 @@
-﻿@model KaydolVM
+﻿@model GirisVM
 
 <form class="form" method="post">
-    <h2>Kaydol</h2>
+    <h2>Giriş</h2>
     <div class="hata" asp-validation-summary="ModelOnly"></div>
     <div class="group">
         <label asp-for="KullaniciAdi"></label>
@@ -13,16 +13,18 @@
         <input asp-for="Sifre" />
         <span class="hata" asp-validation-for="Sifre"></span>
     </div>
-    <div class="group">
-        <label asp-for="SifreTekrar"></label>
-        <input asp-for="SifreTekrar" />
-        <span class="hata" asp-validation-for="SifreTekrar"></span>
-    </div>
+    <label class="as-start checkbox">
+        <input asp-for="BeniHatirla" />
+        <span class="box">
+            <span class="mark"></span>
+        </span>
+        Beni Hatırla
+    </label>
     <div class="hbox-r500 jc-end gap4">
-        <a class="btn2 ph12" asp-action="Giris">Giriş</a>
+        <a class="btn2 ph12" asp-action="Kaydol">Kaydol</a>
         <button class="btn-primary text-l bold ph48 pv4 order-r500-first"
                 type="submit">
-            Kaydol
+            Giriş
         </button>
     </div>
 </form>
