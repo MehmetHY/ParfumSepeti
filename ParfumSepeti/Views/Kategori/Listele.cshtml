@@ -1,0 +1,35 @@
+﻿@model KategoriListeleVM
+
+<div class="panel p64-r vbox gap36">
+    <h1 class="m0 text-center">Kategoriler</h1>
+    <a asp-action="Olustur">Yeni Kategori Oluştur</a>
+    <table class="table panel p16">
+        <thead>
+            <tr>
+                <th class="color-primary text-l w90p">İsim</th>
+                <th class="color-primary text-l">Ürünler</th>
+                <th class="color-primary text-l">Eylemler</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.Isim</td>
+                    <td>@item.UrunSayisi</td>
+                    <td>
+                        <div class="hbox jc-c ai-c gap4">
+                            <a asp-action="Duzenle" asp-route-kategori="@item.Isim" class="btn2 pv8 ph16 hbox jc-c ai-c gap12">
+                                <span class="bold hide-r800">Düzenle</span>
+                                <span class="fa fa-pencil-alt text-xxl"></span>
+                            </a>
+                            <a asp-action="Sil" asp-route-kategori="@item.Isim" class="fa fa-trash-alt text-xxl btn2-danger p8"></a>
+                        </div>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>

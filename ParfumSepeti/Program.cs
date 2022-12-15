@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ParfumSepeti.Data;
 using ParfumSepeti.Models;
+using ParfumSepeti.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,10 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LogoutPath = "/Kullanici/Cikis";
     options.AccessDeniedPath = "/Kullanici/ErisimEngellendi";
 });
+
+
+// managers
+builder.Services.AddScoped<KategoriManager>();
 
 
 var app = builder.Build();

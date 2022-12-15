@@ -4,7 +4,7 @@ using ParfumSepeti.ViewModels;
 
 namespace ParfumSepeti.Services;
 
-public static class SignInManager
+public static class SignInManagerExtension
 {
     public static async Task<Result> SignInAsync(this SignInManager<Kullanici> signInManager,
                                           UserManager<Kullanici> userManager,
