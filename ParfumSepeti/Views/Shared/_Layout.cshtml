@@ -1,49 +1,136 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ParfumSepeti</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ParfumSepeti.styles.css" asp-append-version="true" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ParfumSepeti</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2022 - ParfumSepeti - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş</title>
+    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="~/css/style.css">
+    <link rel="stylesheet" href="~/css/mhy.css">
+</head>
+
+<body>
+    <div class="vignette"></div>
+
+    <header class="panel">
+        <div id="logo-div" class="hbox">
+            <a class="vbox jc-c ai-c logo text-xxxl text-nowrap ph16 nav-link color-primary"
+               id="logo" href="#">
+                Parfüm Dünyası
+            </a>
+        </div>
+
+        <form id="search-form" class="p12 hbox">
+            <div class="inputbox hbox grow">
+                <input class="input ph12 grow" type="search"
+                       placeholder="ara..." />
+                <button type="submit"
+                        class="fa fa-search nav-link ph8 text-l"></button>
+            </div>
+        </form>
+
+        <div id="header-menu">
+            <button class="fa fa-user nav-link text-l ph16"></button>
+            <button class="fa fa-cart-shopping nav-link text-l ph16"></button>
+        </div>
+    </header>
+
+    <nav class="hbox jc-se panel2 wrap shadow-b-l">
+        <a class="nav-link ph16 pv12 grow hbox jc-c ai-c" href="#">Kadın</a>
+        <a class="nav-link ph16 pv12 grow hbox jc-c ai-c" href="#">Erkek</a>
+        <a class="nav-link ph16 pv12 grow hbox jc-c ai-c" href="#">Bakım</a>
+        <a class="nav-link ph16 pv12 grow hbox jc-c ai-c" href="#">Ev</a>
+        <a class="nav-link ph16 pv12 grow hbox jc-c ai-c" href="#">İndirim</a>
+    </nav>
+
+    <main class="grow m64-r vbox ai-c">
+        @RenderBody()
+    </main>
+
+    <footer class="vbox gap64 panel">
+        <div class="vbox gap24 pv16">
+            <div class="hbox jc-c logo text-xxxl color-primary text-nowrap">
+                Parfüm Dünyası
+            </div>
+            <nav class="hbox jc-c wrap gap36">
+                <a class="nav-link text-xxxl fab fa-github" href="#"></a>
+                <a class="nav-link text-xxxl fab fa-facebook" href="#"></a>
+                <a class="nav-link text-xxxl fab fa-instagram" href="#"></a>
+                <a class="nav-link text-xxxl fab fa-twitter" href="#"></a>
+                <a class="nav-link text-xxxl fab fa-snapchat" href="#"></a>
+            </nav>
+        </div>
+
+        <div class="hbox jc-se ai-start wrap gap36 p16 panel2">
+            <div class="vbox gap8">
+                <h3 class="m0">Kategoriler</h3>
+                <ul class="li-no-style p0 m0">
+                    <li><a class="nav-link" href="#">Kadin</a></li>
+                    <li><a class="nav-link" href="#">Erkek</a></li>
+                    <li><a class="nav-link" href="#">Bakim</a></li>
+                    <li><a class="nav-link" href="#">Ev</a></li>
+                    <li><a class="nav-link" href="#">Indirim</a></li>
+                </ul>
+            </div>
+
+            <div class="vbox gap8">
+                <h3 class="m0">Kurumsal</h3>
+                <ul class="li-no-style p0 m0">
+                    <li><a class="nav-link" href="#">Hakkimizda</a></li>
+                    <li><a class="nav-link" href="#">Magazamiz</a></li>
+                    <li><a class="nav-link" href="#">Hesabiniz</a></li>
+                    <li><a class="nav-link" href="#">Inidirm Kuponlari</a></li>
+                </ul>
+            </div>
+
+            <div class="vbox gap8">
+                <h3 class="m0">Tuketici Servisleri</h3>
+                <ul class="li-no-style p0 m0">
+                    <li><a class="nav-link" href="#">Kargo Bilgileri</a></li>
+                    <li><a class="nav-link" href="#">Iade Bilgileri</a></li>
+                </ul>
+            </div>
+
+            <div class="vbox gap8">
+                <h3 class="m0">Daha Fazla Bilgi</h3>
+                <ul class="li-no-style p0 m0">
+                    <li><a class="nav-link" href="#">Gizlilik</a></li>
+                    <li><a class="nav-link" href="#">Cookie</a></li>
+                    <li><a class="nav-link" href="#">Sorumluluklar</a></li>
+                    <li><a class="nav-link" href="#">Baglanti Kur</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="hbox wrap gap36 jc-se">
+            <div class="odeme-secenegi">
+                <span class="visa"></span>
+            </div>
+            <div class="odeme-secenegi">
+                <span class="paypal"></span>
+            </div>
+            <div class="odeme-secenegi">
+                <span class="mastercard"></span>
+            </div>
+            <div class="odeme-secenegi">
+                <span class="maestro"></span>
+            </div>
+            <div class="odeme-secenegi">
+                <span class="applepay"></span>
+            </div>
+        </div>
+
+        <div class="hbox jc-c ai-c pv12">
+            © 2022 Mehmet Hakkı YILDIZ
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>
