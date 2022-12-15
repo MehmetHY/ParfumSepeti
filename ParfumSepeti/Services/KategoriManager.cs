@@ -22,6 +22,7 @@ public class KategoriManager : Manager<Kategori>
                                        page: page)
             .Select(k => new KategoriListeleItem
             {
+                Id = k.Id,
                 Isim = k.Isim,
                 UrunSayisi = k.Urunler.Count
             })
@@ -45,9 +46,9 @@ public class KategoriManager : Manager<Kategori>
         await AddAsync(kategori);
     }
 
-    public async Task<Result<KategoriSilVM>> GetSilVMAsync(string isim)
+    public async Task<Result<KategoriSilVM>> GetSilVMAsync(int id)
     {
-        var kategori = await GetFirstOrDefaultAsync(filter: k => k.Isim == isim,
+        var kategori = await GetFirstOrDefaultAsync(filter: k => k.Id == id,
                                                     include: k => k.Urunler,
                                                     tracked: false);
 
@@ -60,6 +61,7 @@ public class KategoriManager : Manager<Kategori>
 
         var model = new KategoriSilVM
         {
+            Id = id,
             Isim = kategori.Isim,
             UrunSayisi = kategori.Urunler.Count
         };
@@ -72,18 +74,62 @@ public class KategoriManager : Manager<Kategori>
 
     public async Task<Result> RemoveAsync(KategoriSilVM model)
     {
-        var kategori = await GetFirstOrDefaultAsync(
-            k => k.Isim == (model.Isim ?? string.Empty)
-        );
+        var kategori = await GetFirstOrDefaultAsync(k => k.Id == model.Id);
 
         if (kategori == null)
-            return new Result
+            return new()
             {
                 Success = false,
                 Errors = { "Geçersiz kategori" }
             };
 
         Remove(kategori);
+
+        return new();
+    }
+
+    public async Task<Result<KategoriDuzenleVM>> GetDuzenleVMAsync(int id)
+    {
+        var kategori = await GetFirstOrDefaultAsync(k => k.Id == id, false);
+
+        if (kategori == null)
+            return new()
+            {
+                Success = false,
+                Errors = { "Geçersiz kategori" }
+            };
+
+        var model = new KategoriDuzenleVM
+        {
+            Id = kategori.Id,
+            Isim = kategori.Isim
+        };
+
+        return new()
+        {
+            Object = model
+        };
+    }
+
+    public async Task<Result> UpdateAsync(KategoriDuzenleVM model)
+    {
+        var kategori = await GetFirstOrDefaultAsync(k => k.Id == model.Id);
+
+        if (kategori == null)
+            return new()
+            {
+                Success = false,
+                Errors = { "Geçersiz kategori" }
+            };
+
+        if (await AnyAsync(k => k.Id != model.Id && k.Isim == model.Isim))
+            return new()
+            {
+                Success = false,
+                Errors = { $"'{model.Isim}' zaten mevcut" }
+            };
+
+        kategori.Isim = model.Isim;
 
         return new();
     }

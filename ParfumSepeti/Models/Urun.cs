@@ -12,8 +12,7 @@ public class Urun
 
     public string Model { get; set; }
 
-    public string KategoriIsmi { get; set; }
-    [ForeignKey(nameof(KategoriIsmi))]
+    public int KategoriId { get; set; }
     public Kategori Kategori { get; set; }
 
     [Column(TypeName = "decimal(10,2)")]

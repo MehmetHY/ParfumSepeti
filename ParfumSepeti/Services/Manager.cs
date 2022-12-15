@@ -127,13 +127,13 @@ public abstract class Manager<TEntity> where TEntity : class
         _set.RemoveRange(entities);
     }
 
-    public async Task<bool> Any() => await _set.AnyAsync();
+    public async Task<bool> AnyAsync() => await _set.AnyAsync();
 
-    public async Task<bool> Any(Expression<Func<TEntity, bool>> filter)
+    public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> filter)
         => await _set.AnyAsync(filter);
 
-    public async Task<int> Count() => await _set.CountAsync();
+    public async Task<int> CountAsync() => await _set.CountAsync();
 
-    public async Task<int> Count(Expression<Func<TEntity, bool>> filter)
+    public async Task<int> CountAsync(Expression<Func<TEntity, bool>> filter)
         => await _set.CountAsync(filter);
 }

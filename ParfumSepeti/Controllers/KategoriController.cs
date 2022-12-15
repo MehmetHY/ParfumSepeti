@@ -42,9 +42,9 @@ public class KategoriController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Sil(string kategori)
+    public async Task<IActionResult> Sil(int id)
     {
-        var result = await _kategoriManager.GetSilVMAsync(kategori);
+        var result = await _kategoriManager.GetSilVMAsync(id);
 
         if (result.Success)
             return View(result.Object);
@@ -68,9 +68,41 @@ public class KategoriController : Controller
         return BadRequest(result.ToString());
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Duzenle(int id)
+    {
+        var result = await _kategoriManager.GetDuzenleVMAsync(id);
+
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest(result.ToString());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Duzenle(KategoriDuzenleVM model)
+    {
+        if (ModelState.IsValid)
+        {
+            var result = await _kategoriManager.UpdateAsync(model);
+
+            if (result.Success)
+            {
+                await _kategoriManager.SaveAsync();
+
+                return RedirectToAction(nameof(Listele));
+            }
+
+            ModelState.AddResultErrors(result);
+        }
+
+        return View(model);
+    }
+
     #region API
     [AcceptVerbs("GET", "POST")]
     public async Task<JsonResult> KategoriAvailable(string isim)
-        => Json(!await _kategoriManager.Any(k => k.Isim == isim));
+        => Json(!await _kategoriManager.AnyAsync(k => k.Isim == isim));
     #endregion
 }

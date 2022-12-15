@@ -6,7 +6,8 @@ namespace ParfumSepeti.Models;
 
 public class Kategori
 {
-    [Key]
+    public int Id { get; set; }
+
     public string Isim { get; set; }
 
     public List<Urun> Urunler { get; set; }

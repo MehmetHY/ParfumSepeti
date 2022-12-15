@@ -20,11 +20,11 @@
                     <td>@item.UrunSayisi</td>
                     <td>
                         <div class="hbox jc-c ai-c gap4">
-                            <a asp-action="Duzenle" asp-route-kategori="@item.Isim" class="btn2 pv8 ph16 hbox jc-c ai-c gap12">
+                            <a asp-action="Duzenle" asp-route-id="@item.Id" class="btn2 pv8 ph16 hbox jc-c ai-c gap12">
                                 <span class="bold hide-r800">Düzenle</span>
                                 <span class="fa fa-pencil-alt text-xxl"></span>
                             </a>
-                            <a asp-action="Sil" asp-route-kategori="@item.Isim" class="fa fa-trash-alt text-xxl btn2-danger p8"></a>
+                            <a asp-action="Sil" asp-route-id="@item.Id" class="fa fa-trash-alt text-xxl btn2-danger p8"></a>
                         </div>
                     </td>
                 </tr>

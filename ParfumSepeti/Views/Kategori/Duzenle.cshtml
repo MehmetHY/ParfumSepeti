@@ -1,0 +1,26 @@
+﻿@model KategoriDuzenleVM
+
+<form class="form" method="post">
+    <h2>Kategori Düzenle</h2>
+    <div class="hata" asp-validation-summary="ModelOnly"></div>
+
+    <input asp-for="Id" hidden />
+
+    <div class="group">
+        <label asp-for="Isim"></label>
+        <input asp-for="Isim" />
+        <span class="hata" asp-validation-for="Isim"></span>
+    </div>
+
+    <div class="hbox-r500 jc-end gap4">
+        <a asp-action="Listele" class="btn2 ph12">Geri Dön</a>
+        <button class="btn-primary text-l ph48 pv4 order-r500-first"
+                type="submit">
+            Kaydet
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_Validation" />
+}

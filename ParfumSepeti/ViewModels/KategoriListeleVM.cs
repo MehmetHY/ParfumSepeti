@@ -4,6 +4,8 @@
 
 public class KategoriListeleItem
 {
+    public int Id { get; set; }
+
     public string Isim { get; set; }
 
     public int UrunSayisi { get; set; }
