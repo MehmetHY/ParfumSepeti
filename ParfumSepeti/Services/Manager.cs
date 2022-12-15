@@ -2,6 +2,7 @@
 using ParfumSepeti.Data;
 using System.Linq.Expressions;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace ParfumSepeti.Services;
 
@@ -11,15 +12,15 @@ public abstract class Manager<TEntity> where TEntity : class
     protected readonly DbSet<TEntity> _set;
 
     public Manager(AppDbContext db)
-	{
-		_db = db;
+    {
+        _db = db;
         _set = _db.Set<TEntity>();
     }
 
-	public async Task SaveAsync()
-	{
-		await _db.SaveChangesAsync();
-	}
+    public async Task SaveAsync()
+    {
+        await _db.SaveChangesAsync();
+    }
 
     public IQueryable<TEntity> GetQueryable<TProperty>(
         Expression<Func<TEntity, bool>>? filter = null,
@@ -121,4 +122,14 @@ public abstract class Manager<TEntity> where TEntity : class
     {
         _set.RemoveRange(entities);
     }
+
+    public async Task<bool> Any() => await _set.AnyAsync();
+
+    public async Task<bool> Any(Expression<Func<TEntity, bool>> filter)
+        => await _set.AnyAsync(filter);
+
+    public async Task<int> Count() => await _set.CountAsync();
+
+    public async Task<int> Count(Expression<Func<TEntity, bool>> filter)
+        => await _set.CountAsync(filter);
 }

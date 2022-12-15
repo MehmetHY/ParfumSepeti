@@ -11,7 +11,7 @@ public class KategoriManager : Manager<Kategori>
     {
     }
 
-    public async Task<KategoriListeleVM> GetListeleVM(int page = 1,
+    public async Task<KategoriListeleVM> GetListeleVMAsync(int page = 1,
                                                       int pageSize = 20)
     {
         var model = new KategoriListeleVM();
@@ -33,5 +33,15 @@ public class KategoriManager : Manager<Kategori>
             Items = items,
             PageSize = pageSize
         };
+    }
+
+    public async Task CreateAsync(KategoriOlusturVM model)
+    {
+        var kategori = new Kategori
+        {
+            Isim = model.Isim
+        };
+
+        await AddAsync(kategori);
     }
 }
