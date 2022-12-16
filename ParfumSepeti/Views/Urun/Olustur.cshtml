@@ -1,0 +1,66 @@
+﻿@model UrunOlusturVM
+
+<form class="form" method="post" enctype="multipart/form-data">
+    <h2>Ürün Oluştur</h2>
+
+    <div class="hata" asp-validation-summary="ModelOnly"></div>
+
+    <div class="group">
+        <label asp-for="Baslik"></label>
+        <input asp-for="Baslik" />
+        <span asp-validation-for="Baslik" class="hata"></span>
+    </div>
+
+    <div class="group">
+        <label asp-for="Model"></label>
+        <input asp-for="Model" />
+        <span asp-validation-for="Model" class="hata"></span>
+    </div>
+
+    <div class="group">
+        <label asp-for="KategoriId"></label>
+        <select asp-for="KategoriId" asp-items="@Model.Kategoriler"></select>
+        <span asp-validation-for="KategoriId" class="hata"></span>
+    </div>
+
+    <div class="group">
+        <label asp-for="Fiyat"></label>
+        <input asp-for="Fiyat" placeholder="9,95" />
+        <span asp-validation-for="Fiyat" class="hata"></span>
+    </div>
+
+    <div class="group">
+        <label asp-for="IndirimYuzdesi"></label>
+        <input asp-for="IndirimYuzdesi" />
+        <span asp-validation-for="IndirimYuzdesi" class="hata"></span>
+    </div>
+
+    <div class="group">
+        <label asp-for="Aciklama"></label>
+        <textarea rows="4" asp-for="Aciklama"></textarea>
+        <span asp-validation-for="Aciklama" class="hata"></span>
+    </div>
+
+    <div class="group">
+        <label asp-for="KargoBilgisi"></label>
+        <input asp-for="KargoBilgisi" />
+        <span asp-validation-for="KargoBilgisi" class="hata"></span>
+    </div>
+
+    <div class="group">
+        <label for="file">Kapak</label>
+        <input type="file" name="file" accept="image/png, image/jpeg, .webp" required />
+    </div>
+
+    <div class="hbox-r500 jc-end gap4">
+        <a asp-action="Listele" class="btn2 ph12">Geri Dön</a>
+        <button class="btn-primary text-l ph48 pv4 order-r500-first"
+                type="submit">
+            Kaydet
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_Validation" />
+}

@@ -10,6 +10,6 @@ public class KategoriDuzenleVM
     [ValidateNever]
     public int Id { get; set; }
 
-    [Required(ErrorMessage = "Gerekli")]
+    [Required(ErrorMessage = "Gerekli", AllowEmptyStrings = false)]
     public string Isim { get; set; }
 }

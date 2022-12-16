@@ -12,7 +12,7 @@ public class KategoriManager : Manager<Kategori>
     }
 
     public async Task<KategoriListeleVM> GetListeleVMAsync(int page = 1,
-                                                      int pageSize = 20)
+                                                           int pageSize = 20)
     {
         var model = new KategoriListeleVM();
 

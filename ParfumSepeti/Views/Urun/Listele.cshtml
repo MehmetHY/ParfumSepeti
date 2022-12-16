@@ -1,0 +1,44 @@
+﻿@model UrunListeleVM
+
+<div class="panel p64-r vbox gap36 as-s">
+    <a asp-action="Olustur" class="btn-flat as-start">Yeni Ürün Oluştur</a>
+    <h1 class="m0 text-center">Ürünler</h1>
+    <table class="table panel p16">
+        <thead>
+            <tr>
+                <th class="color-primary text-l">Kapak</th>
+                <th class="color-primary text-l w90p">Başlık</th>
+                <th class="color-primary text-l">Fiyat</th>
+                <th class="color-primary text-l">İndirim</th>
+                <th class="color-primary text-l">Kategori</th>
+                <th class="color-primary text-l">Eylemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>
+                        <img src="~/@item.KapakUrl" alt="kapak" class="w64" />
+                    </td>
+                    <td>
+                        <div class="text-nowrap">@item.Baslik</div>
+                        <div class="text-nowrap">@item.Model</div>
+                    </td>
+                    <td class="text-nowrap">@item.Fiyat.ToString("N") TL</td>
+                    <td>@(item.Indirim)%</td>
+                    <td>@item.Kategori</td>
+                    <td>
+                        <div class="hbox jc-c ai-c gap4">
+                            <a asp-action="Duzenle" asp-route-id="@item.Id" class="btn2 pv8 ph16 hbox jc-c ai-c gap12">
+                                <span class="bold hide-r800">Düzenle</span>
+                                <span class="fa fa-pencil-alt text-xxl"></span>
+                            </a>
+                            <a asp-action="Sil" asp-route-id="@item.Id" class="fa fa-trash-alt text-xxl btn2-danger p8"></a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

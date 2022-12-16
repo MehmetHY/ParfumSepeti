@@ -136,4 +136,25 @@ public abstract class Manager<TEntity> where TEntity : class
 
     public async Task<int> CountAsync(Expression<Func<TEntity, bool>> filter)
         => await _set.CountAsync(filter);
+
+    public async Task<int> PageCountAsync(int pageSize = 20)
+    {
+        var count = await CountAsync();
+        var pageCount = count / pageSize;
+
+        if (pageCount == 0 || pageCount % pageSize > 0)
+            ++pageCount;
+
+        return pageCount;
+    }
+
+    public async Task<bool> ValidPage(int page, int pageSize = 20)
+    {
+        if (page < 1)
+            return false;
+
+        var pageCount = await PageCountAsync(pageSize);
+
+        return pageCount >= page;
+    }
 }

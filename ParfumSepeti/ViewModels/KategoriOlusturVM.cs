@@ -7,7 +7,7 @@ namespace ParfumSepeti.ViewModels;
 
 public class KategoriOlusturVM
 {
-    [Required(ErrorMessage = "Gerekli!")]
+    [Required(ErrorMessage = "Gerekli", AllowEmptyStrings = false)]
     [Remote(action: "KategoriAvailable", controller: "Kategori", ErrorMessage = "Zaten mevcut!")]
     public string Isim { get; set; }
 }

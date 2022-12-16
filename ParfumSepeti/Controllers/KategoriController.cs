@@ -18,9 +18,9 @@ public class KategoriController : Controller
 
     public async Task<IActionResult> Listele(int page = 1, int pageSize = 20)
     {
-        var model = await _kategoriManager.GetListeleVMAsync(page, pageSize);
+        var vm = await _kategoriManager.GetListeleVMAsync(page, pageSize);
 
-        return View(model);
+        return View(vm);
     }
 
     [HttpGet]
@@ -28,17 +28,17 @@ public class KategoriController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Olustur(KategoriOlusturVM model)
+    public async Task<IActionResult> Olustur(KategoriOlusturVM vm)
     {
         if (ModelState.IsValid)
         {
-            await _kategoriManager.CreateAsync(model);
+            await _kategoriManager.CreateAsync(vm);
             await _kategoriManager.SaveAsync();
 
             return RedirectToAction(nameof(Listele));
         }
 
-        return View(model);
+        return View(vm);
     }
 
     [HttpGet]
@@ -54,9 +54,9 @@ public class KategoriController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Sil(KategoriSilVM model)
+    public async Task<IActionResult> Sil(KategoriSilVM vm)
     {
-        var result = await _kategoriManager.RemoveAsync(model);
+        var result = await _kategoriManager.RemoveAsync(vm);
 
         if (result.Success)
         {
@@ -81,11 +81,11 @@ public class KategoriController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Duzenle(KategoriDuzenleVM model)
+    public async Task<IActionResult> Duzenle(KategoriDuzenleVM vm)
     {
         if (ModelState.IsValid)
         {
-            var result = await _kategoriManager.UpdateAsync(model);
+            var result = await _kategoriManager.UpdateAsync(vm);
 
             if (result.Success)
             {
@@ -97,7 +97,7 @@ public class KategoriController : Controller
             ModelState.AddResultErrors(result);
         }
 
-        return View(model);
+        return View(vm);
     }
 
     #region API

@@ -7,11 +7,11 @@ namespace ParfumSepeti.ViewModels;
 
 public class GirisVM
 {
-    [Required(ErrorMessage = "Gerekli!")]
+    [Required(ErrorMessage = "Gerekli", AllowEmptyStrings = false)]
     [Display(Name = "Kullanıcı Adı")]
     public string KullaniciAdi { get; set; }
 
-    [Required(ErrorMessage = "Gerekli!")]
+    [Required(ErrorMessage = "Gerekli", AllowEmptyStrings = false)]
     [Display(Name = "Şifre")]
     [DataType(DataType.Password)]
     public string Sifre { get; set; }
