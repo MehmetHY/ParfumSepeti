@@ -484,20 +484,20 @@ a.btn-primary, a.btn-danger, a.btn2, a.btn2-danger {
         justify-content: flex-end;
     }
 
-.form .hata, .form .hata span, .form .hata * {
-    font-size: small;
-    color: var(--danger) !important;
-}
+    .form .hata, .form .hata span, .form .hata * {
+        font-size: small;
+        color: var(--danger) !important;
+    }
 
 
-.form input[type=file]::file-selector-button {
-    background-color: transparent;
-    border: 2px solid var(--normal);
-    color: var(--normal);
-    cursor: pointer;
-    font-size: small;
-    padding: 4px 8px;
-}
+    .form input[type=file]::file-selector-button {
+        background-color: transparent;
+        border: 2px solid var(--normal);
+        color: var(--normal);
+        cursor: pointer;
+        font-size: small;
+        padding: 4px 8px;
+    }
 
 .checkbox {
     display: flex;
@@ -535,6 +535,16 @@ a.btn-primary, a.btn-danger, a.btn2, a.btn2-danger {
         .checkbox input[type=checkbox]:checked ~ .box .mark {
             transform: scale(1);
         }
+    .checkbox .toggle {
+        transform: scale(0);
+        visibility: hidden;
+        transition: transform 120ms linear, visibility 120ms linear;
+    }
+
+    .checkbox input[type=checkbox]:checked ~ .toggle {
+        transform: scale(1);
+        visibility: visible;
+    }
 /* --------------------------------------------------------- */
 /* BOX MODEL */
 /* --------------------------------------------------------- */

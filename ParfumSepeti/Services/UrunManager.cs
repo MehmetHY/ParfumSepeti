@@ -145,4 +145,56 @@ public class UrunManager : Manager<Urun>
 
         return new();
     }
+
+    public async Task<Result<UrunSilVM>> GetSilVMAsync(int id)
+    {
+        var urun = await _set
+            .Include(u => u.Kategori)
+            .Include(u => u.SepetOgeleri)
+            .Include(u => u.Isteyenler)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == id);
+
+        if (urun == null)
+            return new()
+            {
+                Success = false,
+                Errors = { "Geçersiz ürün" }
+            };
+
+        return new()
+        {
+            Object = new()
+            {
+                Id = urun.Id,
+                Baslik = urun.Baslik,
+                Model = urun.Model,
+                Kategori = urun.Kategori.Isim,
+                KapakUrl = urun.KapakUrl,
+                IstekSayisi = urun.Isteyenler.Count,
+                SepetSayisi = urun.SepetOgeleri.Count
+            }
+        };
+    }
+
+    public async Task<Result> RemoveAsync(UrunSilVM vm)
+    {
+        var urun = await GetFirstOrDefaultAsync(u => u.Id == vm.Id);
+
+        if (urun == null)
+            return new()
+            {
+                Success = false,
+                Errors = { "Geçersiz ürün" }
+            };
+
+        var imagePath = Path.Combine(_env.WebRootPath, urun.KapakUrl);
+
+        if (File.Exists(imagePath))
+            File.Delete(imagePath);
+            
+        Remove(urun);
+
+        return new();
+    }
 }

@@ -56,4 +56,31 @@ public class UrunController : Controller
 
         return View(vm);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Sil(int id)
+    {
+        var result = await _urunManager.GetSilVMAsync(id);
+
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest(result.ToString());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Sil(UrunSilVM vm)
+    {
+        var result = await _urunManager.RemoveAsync(vm);
+
+        if (result.Success)
+        {
+            await _urunManager.SaveAsync();
+
+            return RedirectToAction(nameof(Listele));
+        }
+
+        return BadRequest(result.ToString());
+    }
 }
