@@ -6,8 +6,10 @@ namespace ParfumSepeti.ViewModels;
 
 #pragma warning disable CS8618
 
-public class UrunOlusturVM
+public class UrunDuzenleVM
 {
+    public int Id { get; set; }
+
     [Required(ErrorMessage = "Gerekli", AllowEmptyStrings = false)]
     [Display(Name = "Başlık")]
     public string Baslik { get; set; }
@@ -20,6 +22,9 @@ public class UrunOlusturVM
     public int KategoriId { get; set; }
     [ValidateNever]
     public List<SelectListItem> Kategoriler { get; set; } = new();
+
+    [ValidateNever]
+    public string KapakUrl { get; set; }
 
     [Required(ErrorMessage = "Gerekli", AllowEmptyStrings = false)]
     [RegularExpression("""^\d{1,8}((,|\.)\d{1,2})?$""", ErrorMessage = "Örnek: 45.90")]
@@ -38,4 +43,7 @@ public class UrunOlusturVM
     [Required(ErrorMessage = "Gerekli", AllowEmptyStrings = false)]
     [Display(Name = "Kargo Bilgisi")]
     public string KargoBilgisi { get; set; }
+
+    [Display(Name = "Kapak resmini değiştir")]
+    public bool KapakDegistir { get; set; } = false;
 }

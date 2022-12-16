@@ -1,0 +1,79 @@
+﻿@model UrunDuzenleVM
+
+<form class="form" method="post" enctype="multipart/form-data">
+    <h2>Ürün Güncelle</h2>
+
+    <input asp-for="Id" hidden />
+    <input asp-for="KapakUrl" hidden />
+
+    <div asp-validation-summary="ModelOnly" class="hata"></div>
+
+    <div class="group">
+        <img class="border2 w90p as-c" src="~/@Model.KapakUrl" alt="kapak" />
+    </div>
+
+    <div class="group">
+        <label asp-for="Baslik"></label>
+        <input asp-for="Baslik" />
+        <span class="hata" asp-validation-for="Baslik"></span>
+    </div>
+
+    <div class="group">
+        <label asp-for="Model"></label>
+        <input asp-for="Model" />
+        <span class="hata" asp-validation-for="Model"></span>
+    </div>
+
+    <div class="group">
+        <label asp-for="KategoriId"></label>
+        <select asp-for="KategoriId" asp-items="@Model.Kategoriler"></select>
+        <span class="hata" asp-validation-for="KategoriId"></span>
+    </div>
+
+    <div class="group">
+        <label asp-for="Fiyat"></label>
+        <input asp-for="Fiyat" />
+        <span class="hata" asp-validation-for="Fiyat"></span>
+    </div>
+
+    <div class="group">
+        <label asp-for="IndirimYuzdesi"></label>
+        <input asp-for="IndirimYuzdesi" />
+        <span class="hata" asp-validation-for="IndirimYuzdesi"></span>
+    </div>
+
+    <div class="group">
+        <label asp-for="Aciklama"></label>
+        <textarea asp-for="Aciklama" rows="4"></textarea>
+        <span class="hata" asp-validation-for="Aciklama"></span>
+    </div>
+
+    <div class="group">
+        <label asp-for="KargoBilgisi"></label>
+        <input asp-for="KargoBilgisi" />
+        <span class="hata" asp-validation-for="KargoBilgisi"></span>
+    </div>
+
+    <div class="group">
+        <label asp-for="KapakDegistir" class="checkbox text-nowrap">
+            <input asp-for="KapakDegistir" />
+            <span class="box">
+                <span class="mark"></span>
+            </span>
+            Kapak resmini güncelle
+            <input class="toggle" type="file" name="file" />
+        </label>
+    </div>
+
+    <div class="hbox-r500 jc-end gap4">
+        <a asp-action="Listele" class="btn2 ph12">Geri Dön</a>
+        <button class="btn-primary text-l ph48 pv4 order-r500-first"
+                type="submit">
+            Kaydet
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_Validation" />
+}

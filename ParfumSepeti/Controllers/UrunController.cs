@@ -51,8 +51,9 @@ public class UrunController : Controller
             }
 
             ModelState.AddResultErrors(result);
-            await _urunManager.PopulateOlusturVMAsync(vm);
         }
+
+        vm.Kategoriler = await _urunManager.GetKategoriSelectListAsync();
 
         return View(vm);
     }
@@ -82,5 +83,40 @@ public class UrunController : Controller
         }
 
         return BadRequest(result.ToString());
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Duzenle(int id)
+    {
+        var result = await _urunManager.GetDuzenleVM(id);
+
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest(result.ToString());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [RequestFormLimits(MultipartBodyLengthLimit = 100_000_000)]
+    public async Task<IActionResult> Duzenle(UrunDuzenleVM vm, IFormFile? file)
+    {
+        if (ModelState.IsValid)
+        {
+            var result = await _urunManager.UpdateAsync(vm, file);
+
+            if (result.Success)
+            {
+                await _urunManager.SaveAsync();
+
+                return RedirectToAction(nameof(Listele));
+            }
+
+            ModelState.AddResultErrors(result);
+        }
+
+        vm.Kategoriler = await _urunManager.GetKategoriSelectListAsync();
+
+        return View(vm);
     }
 }

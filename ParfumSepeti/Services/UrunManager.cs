@@ -63,30 +63,19 @@ public class UrunManager : Manager<Urun>
         };
     }
 
+    public async Task<List<SelectListItem>> GetKategoriSelectListAsync()
+        => await _db.Kategori.Select(k => new SelectListItem
+        {
+            Value = k.Id.ToString(),
+            Text = k.Isim
+        })
+            .ToListAsync();
+
     public async Task<UrunOlusturVM> GetOlusturVMAsync()
-    {
-        var selectListItems = await _db.Kategori.Select(k => new SelectListItem
+        => new()
         {
-            Value = k.Id.ToString(),
-            Text = k.Isim
-        })
-            .ToListAsync();
-
-        return new()
-        {
-            Kategoriler = selectListItems
+            Kategoriler = await GetKategoriSelectListAsync()
         };
-    }
-
-    public async Task PopulateOlusturVMAsync(UrunOlusturVM vm)
-    {
-        vm.Kategoriler = await _db.Kategori.Select(k => new SelectListItem
-        {
-            Value = k.Id.ToString(),
-            Text = k.Isim
-        })
-            .ToListAsync();
-    }
 
     public async Task<Result> CreateAsync(UrunOlusturVM vm, IFormFile? file)
     {
@@ -192,8 +181,111 @@ public class UrunManager : Manager<Urun>
 
         if (File.Exists(imagePath))
             File.Delete(imagePath);
-            
+
         Remove(urun);
+
+        return new();
+    }
+
+    public async Task<Result<UrunDuzenleVM>> GetDuzenleVM(int id)
+    {
+        var urun = await GetFirstOrDefaultAsync(u => u.Id == id, false);
+
+        if (urun == null)
+            return new()
+            {
+                Success = false,
+                Errors = { "Geçersiz ürün" }
+            };
+
+        return new()
+        {
+            Object = new()
+            {
+                Id = urun.Id,
+                Baslik = urun.Baslik,
+                Model = urun.Model,
+                KategoriId = urun.KategoriId,
+                Kategoriler = await GetKategoriSelectListAsync(),
+                Fiyat = urun.Fiyat,
+                IndirimYuzdesi = urun.IndirimYuzdesi,
+                Aciklama = urun.Aciklama,
+                KargoBilgisi = urun.KargoBilgisi,
+                KapakUrl = urun.KapakUrl
+            }
+        };
+    }
+
+    public async Task<Result> UpdateAsync(UrunDuzenleVM vm, IFormFile? file)
+    {
+        var urun = await GetFirstOrDefaultAsync(u => u.Id == vm.Id);
+
+        if (urun == null)
+            return new()
+            {
+                Success = false,
+                Errors = { "Geçersiz ürün" }
+            };
+
+        var newKategori =
+            await _db.Kategori.FirstOrDefaultAsync(k => k.Id == vm.KategoriId);
+
+        if (newKategori == null)
+            return new()
+            {
+                Success = false,
+                Errors = { "Geçersiz kategori" }
+            };
+
+        urun.Baslik = vm.Baslik;
+        urun.Model = vm.Model;
+        urun.KategoriId = newKategori.Id;
+        urun.Fiyat = vm.Fiyat;
+        urun.IndirimYuzdesi = vm.IndirimYuzdesi ?? 0;
+        urun.Aciklama = vm.Aciklama;
+        urun.KargoBilgisi = vm.KargoBilgisi;
+
+        if (vm.KapakDegistir)
+        {
+            if (file == null)
+                return new()
+                {
+                    Success = false,
+                    Errors = { "Kapak resmi değiştirmek için yeni bir resim yükle" }
+                };
+
+            if (file.Length > MAX_UPLOAD_SIZE)
+                return new()
+                {
+                    Success = false,
+                    Errors = { "Resim 5MB'tan büyük olamaz" }
+                };
+
+            var extension = Path.GetExtension(file.FileName).ToLower();
+
+            if (!AllowedImageExtensions.Contains(extension))
+                return new()
+                {
+                    Success = false,
+                    Errors = { $"Geçerli uzantılar: {string.Join(", ", AllowedImageExtensions)}" }
+                };
+
+            var newImageName = $"{Guid.NewGuid()}{extension}";
+            var newKapakUrl = $"resimler/urunler/{newImageName}";
+            var newPath = Path.Combine(_env.WebRootPath, newKapakUrl);
+
+            using (var stream = new FileStream(newPath, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+
+            var oldPath = Path.Combine(_env.WebRootPath, urun.KapakUrl);
+
+            if (File.Exists(oldPath))
+                File.Delete(oldPath);
+
+            urun.KapakUrl = newKapakUrl;
+        }
 
         return new();
     }
