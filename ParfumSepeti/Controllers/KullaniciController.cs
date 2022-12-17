@@ -124,6 +124,43 @@ public class KullaniciController : Controller
         return BadRequest(result.ToString());
     }
 
+    [Authorize(Roles = "admin")]
+    [HttpGet]
+    public async Task<IActionResult> Duzenle(string id)
+    {
+        var result = await _kullaniciManager.GetDuzenleVMAsync(id);
+
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest(result.ToString());
+    }
+
+    [Authorize(Roles = "admin")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Duzenle(KullaniciDuzenleVM vm)
+    {
+        if (ModelState.IsValid)
+        {
+            var result = await _kullaniciManager.UpdateAsync(vm);
+
+            if (result.Success)
+            {
+                await _kullaniciManager.SaveAsync();
+
+                return RedirectToAction(nameof(Listele));
+            }
+
+            if (result.Fatal)
+                return BadRequest(result.ToString());
+
+            ModelState.AddResultErrors(result);
+        }
+
+        return View(vm);
+    }
+
     #region API
     [AcceptVerbs("GET", "POST")]
     public async Task<JsonResult> UserNameAvailable(string kullaniciAdi)

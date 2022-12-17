@@ -120,4 +120,67 @@ public class KullaniciManager : Manager<Kullanici>
 
         return new();
     }
+
+    public async Task<Result<KullaniciDuzenleVM>> GetDuzenleVMAsync(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz kullanıcı" }
+            };
+
+        var kullanici = await GetFirstOrDefaultAsync(filter: k => k.Id == id,
+                                                     tracked: false);
+
+        if (kullanici == null || await _userManager.IsInRoleAsync(kullanici, "admin"))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz kullanıcı" }
+            };
+
+        return new()
+        {
+            Object = new()
+            {
+                Id = kullanici.Id,
+                KullaniciAdi = kullanici.UserName ?? "-"
+            }
+        };
+    }
+
+    public async Task<Result> UpdateAsync(KullaniciDuzenleVM vm)
+    {
+        if (string.IsNullOrWhiteSpace(vm.Id))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz kullanıcı" }
+            };
+
+        var kullanici = await GetFirstOrDefaultAsync(filter: k => k.Id == vm.Id);
+
+        if (kullanici == null || await _userManager.IsInRoleAsync(kullanici, "admin"))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz kullanıcı" }
+            };
+
+        if (await AnyAsync(k => k.Id != kullanici.Id && k.UserName == vm.KullaniciAdi))
+            return new()
+            {
+                Success = false,
+                Errors = { $"Kullanıcı adı '{vm.KullaniciAdi}' zaten mevcut" }
+            };
+
+        kullanici.UserName = vm.KullaniciAdi;
+
+        return new();
+    }
 }

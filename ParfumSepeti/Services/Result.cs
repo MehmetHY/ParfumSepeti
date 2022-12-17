@@ -8,6 +8,7 @@ public class Result
     public Result()
     {
         Success = true;
+        Fatal = false;
         Errors = new();
     }
 
@@ -21,6 +22,8 @@ public class Result
     }
 
     public bool Success { get; set; }
+
+    public bool Fatal { get; set; }
 
     public List<string> Errors { get; set; }
 

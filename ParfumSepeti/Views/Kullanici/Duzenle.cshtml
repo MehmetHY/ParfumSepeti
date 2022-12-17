@@ -1,0 +1,27 @@
+﻿@model KullaniciDuzenleVM
+
+<form class="form" method="post">
+    <h2>Kullanıcı Düzenle</h2>
+
+    <div asp-validation-summary="ModelOnly" class="hata"></div>
+
+    <input asp-for="Id" hidden />
+
+    <div class="group">
+        <label asp-for="KullaniciAdi"></label>
+        <input asp-for="KullaniciAdi" />
+        <span class="hata" asp-validation-for="KullaniciAdi"></span>
+    </div>
+
+    <div class="hbox-r500 jc-end gap4">
+        <a asp-action="Listele" class="btn2 ph12">Geri Dön</a>
+        <button class="btn-primary text-l bold ph48 pv4 order-r500-first"
+                type="submit">
+            Kaydet
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_Validation" />
+}
