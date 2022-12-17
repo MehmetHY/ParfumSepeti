@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using ParfumSepeti.Const;
 using ParfumSepeti.Models;
 using ParfumSepeti.ViewModels;
 

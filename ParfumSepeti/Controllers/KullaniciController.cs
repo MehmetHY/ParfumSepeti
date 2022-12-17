@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ParfumSepeti.Models;
 using ParfumSepeti.Services;
@@ -9,12 +10,15 @@ public class KullaniciController : Controller
 {
     private readonly SignInManager<Kullanici> _signInManager;
     private readonly UserManager<Kullanici> _userManager;
+    private readonly KullaniciManager _kullaniciManager;
 
     public KullaniciController(SignInManager<Kullanici> signInManager,
-                               UserManager<Kullanici> userManager)
+                               UserManager<Kullanici> userManager,
+                               KullaniciManager kullaniciManager)
     {
         _signInManager = signInManager;
         _userManager = userManager;
+        _kullaniciManager = kullaniciManager;
     }
 
     [HttpGet]
@@ -81,6 +85,43 @@ public class KullaniciController : Controller
             await _signInManager.SignOutAsync();
 
         return RedirectToAction(nameof(Giris));
+    }
+
+    [Authorize(Roles = "admin")]
+    [HttpGet]
+    public async Task<IActionResult> Listele(int page = 1, int pageSize = 20)
+    {
+        var result = await _kullaniciManager.GetListeleVMAsync(page, pageSize);
+
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest(result.ToString());
+    }
+
+    [Authorize(Roles = "admin")]
+    [HttpGet]
+    public async Task<IActionResult> Sil(string id)
+    {
+        var result = await _kullaniciManager.GetSilVMAsync(id);
+
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest(result.ToString());
+    }
+
+    [Authorize(Roles = "admin")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Sil(KullaniciSilVM vm)
+    {
+        var result = await _kullaniciManager.RemoveAsync(vm);
+
+        if (result.Success)
+            return RedirectToAction(nameof(Listele));
+
+        return BadRequest(result.ToString());
     }
 
     #region API

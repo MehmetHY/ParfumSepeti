@@ -1,0 +1,27 @@
+﻿@model KullaniciSilVM
+
+<form class="form" method="post">
+    <h2>Kullanıcı Sil</h2>
+
+    <input asp-for="Id" hidden />
+
+    <div class="group">
+        <label>İsim</label>
+        <input type="text" value="@Model.Isim" disabled />
+    </div>
+
+    <div class="group">
+        <span>
+            Kullanıcının <span class="text-l bold color-primary">@Model.OdenenSiparis</span> adet ödenmiş
+            siparişi var.
+        </span>
+    </div>
+
+    <div class="hbox-r500 jc-end gap4">
+        <a asp-action="Listele" class="btn2 ph12">Geri Dön</a>
+        <button class="btn-danger text-l ph48 pv4 order-r500-first"
+                type="submit">
+            Sil
+        </button>
+    </div>
+</form>

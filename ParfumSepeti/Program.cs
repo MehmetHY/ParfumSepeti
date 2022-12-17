@@ -45,6 +45,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 // managers
 builder.Services.AddScoped<KategoriManager>();
 builder.Services.AddScoped<UrunManager>();
+builder.Services.AddScoped<KullaniciManager>();
 
 
 var app = builder.Build();
