@@ -1,10 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ParfumSepeti.Services;
 
 namespace ParfumSepeti.Controllers;
 public class MagazaController : Controller
 {
-    public IActionResult Anasayfa()
+    private readonly MagazaManager _magazaManager;
+
+    public MagazaController(MagazaManager magazaManager)
     {
-        return View();
+        _magazaManager = magazaManager;
+    }
+
+    public async Task<IActionResult> Anasayfa()
+    {
+        var vm = await _magazaManager.GetAnasayfaVMAsync();
+
+        return View(vm);
     }
 }

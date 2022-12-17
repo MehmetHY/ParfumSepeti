@@ -1,1 +1,56 @@
-﻿
+﻿@model AnasayfaVM
+
+<div class="panel w90p p48-r vbox gap48">
+
+    <div class="panel vbox p16-r">
+        <div class="hbox jc-sb ai-c">
+            <h2 class="m0">Yeni Ürünler</h2>
+            <a asp-action="Yeni" class="btn-flat">Daha fazla</a>
+        </div>
+        <div class="hbox wrap p16-r gap16 ai-start jc-start">
+
+            @foreach (var urun in Model.YeniEklenenler)
+            {
+                <partial name="_UrunCard" model="@urun" />
+            }
+
+        </div>
+    </div>
+
+    <div class="panel vbox p16-r">
+        <div class="hbox jc-sb ai-c">
+            <h2 class="m0">İndirim</h2>
+            <a asp-action="Indirim" class="btn-flat">Daha fazla</a>
+        </div>
+        <div class="hbox wrap p16-r gap16 ai-start jc-start">
+
+            @foreach (var urun in Model.Indirimler)
+            {
+                <partial name="_UrunCard" model="@urun" />
+            }
+
+        </div>
+    </div>
+
+    @foreach (var kategori in Model.Kategoriler)
+    {
+        @if (kategori.Urunler.Count() > 0)
+        {
+            <div class="panel vbox p16-r">
+                <div class="hbox jc-sb ai-c">
+                    <h2 class="m0">@kategori.Isim</h2>
+                    <a asp-action="Kategori" asp-route-id="@kategori.Id" class="btn-flat">Daha fazla</a>
+                </div>
+                <div class="hbox wrap p16-r gap16 ai-start jc-start">
+
+                    @foreach (var urun in kategori.Urunler)
+                    {
+                        <partial name="_UrunCard" model="@urun" />
+                    }
+
+                </div>
+            </div>
+        }
+    }
+
+</div>

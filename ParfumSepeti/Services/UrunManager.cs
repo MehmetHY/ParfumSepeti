@@ -36,7 +36,8 @@ public class UrunManager : Manager<Urun>
                 Errors = { "Geçersiz sayfa" }
             };
 
-        var items = await GetQueryable(include: u => u.Kategori,
+        var items = await GetQueryable(_set.OrderByDescending(u => u.EklenmeTarihi),
+                                       include: u => u.Kategori,
                                        tracked: false,
                                        pageSize: pageSize,
                                        page: page)
@@ -115,7 +116,8 @@ public class UrunManager : Manager<Urun>
             IndirimYuzdesi = vm.IndirimYuzdesi ?? 0,
             Aciklama = vm.Aciklama,
             KargoBilgisi = vm.KargoBilgisi,
-            KapakUrl = kapakUrl
+            KapakUrl = kapakUrl,
+            EklenmeTarihi = DateTime.Now
         };
 
         await AddAsync(urun);
@@ -289,4 +291,29 @@ public class UrunManager : Manager<Urun>
 
         return new();
     }
+
+    public async Task<List<Urun>> GetYeniEklenenlerAsync(int count)
+        => await GetQueryable(queryable: _set.OrderByDescending(u => u.EklenmeTarihi),
+                              include: u => u.Kategori,
+                              tracked: false,
+                              page: 1,
+                              pageSize: count)
+            .ToListAsync();
+
+    public async Task<List<Urun>> GetIndirimdekilerAsync(int count)
+        => await GetQueryable(queryable: _set.OrderByDescending(u => u.IndirimYuzdesi),
+                              filter: u => u.IndirimYuzdesi > 0,
+                              include: u => u.Kategori,
+                              tracked: false,
+                              page: 1,
+                              pageSize: count)
+        .ToListAsync();
+
+    public async Task<List<Urun>> GetOfKategori(int kategoriId, int count)
+        => await _set
+        .AsNoTracking()
+        .Where(u => u.KategoriId == kategoriId)
+        .OrderByDescending(u => u.EklenmeTarihi)
+        .Take(count)
+        .ToListAsync();
 }

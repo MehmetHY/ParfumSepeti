@@ -20,15 +20,18 @@ public abstract class Manager<TEntity> where TEntity : class
         await _db.SaveChangesAsync();
     }
 
+    public DbSet<TEntity> Set => _set;
+
     public IQueryable<TEntity> GetQueryable<TProperty>(
+        IQueryable<TEntity>? queryable,
         Expression<Func<TEntity, bool>>? filter = null,
         Expression<Func<TEntity, TProperty>>? include = null,
         bool tracked = true,
         int pageSize = 0,
-        int page = 1
-    )
+        int page = 1)
     {
-        IQueryable<TEntity> queryable = _set;
+        if (queryable == null)
+            queryable = _set;
 
         if (filter != null)
             queryable = queryable.Where(filter);
@@ -43,6 +46,19 @@ public abstract class Manager<TEntity> where TEntity : class
             queryable = queryable.Skip((page - 1) * pageSize).Take(pageSize);
 
         return queryable;
+    }
+
+    public IQueryable<TEntity> GetQueryable<TProperty>(
+        Expression<Func<TEntity, bool>>? filter = null,
+        Expression<Func<TEntity, TProperty>>? include = null,
+        bool tracked = true,
+        int pageSize = 0,
+        int page = 1
+    )
+    {
+        IQueryable<TEntity> queryable = _set;
+
+        return GetQueryable(queryable, filter, include, tracked, pageSize, page);
     }
 
 

@@ -1,0 +1,18 @@
+﻿@model UrunCardVM
+
+<a asp-action="Urun" asp-controller="Magaza" asp-route-id="@Model.Id" class="urun-karti">
+    <img src="@Model.KapakUrl" alt="resim" />
+    <div>
+        <h3>@Model.Baslik</h3>
+        <h4>@Model.Model</h4>
+        <h4>@Model.Kategori</h4>
+        <div class="fiyat-box">
+            @if (Model.Indirim > 0)
+            {
+                <span class="eski">@Model.Fiyat.ToString("F") TL</span>
+                <span class="yuzde">(@(Model.Indirim)%)</span>
+            }
+            <span class="fiyat">@Model.IndirimliFiyat TL</span>
+        </div>
+    </div>
+</a>
