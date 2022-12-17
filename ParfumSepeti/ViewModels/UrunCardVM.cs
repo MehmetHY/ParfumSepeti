@@ -1,4 +1,8 @@
-﻿namespace ParfumSepeti.ViewModels;
+﻿using ParfumSepeti.Models;
+
+namespace ParfumSepeti.ViewModels;
+
+#pragma warning disable CS8618
 
 public class UrunCardVM
 {
@@ -17,4 +21,19 @@ public class UrunCardVM
     public int Indirim { get; set; }
 
     public string IndirimliFiyat => (Fiyat * (100 - Indirim) / 100).ToString("F");
+}
+
+public static class UrunCardVMExtension
+{
+    public static IQueryable<UrunCardVM> ToUrunCardVMs(this IQueryable<Urun> queryable)
+        => queryable.Select(u => new UrunCardVM
+        {
+            Id = u.Id,
+            Baslik = u.Baslik,
+            Model = u.Model,
+            Fiyat = u.Fiyat,
+            Indirim = u.IndirimYuzdesi,
+            KapakUrl = u.KapakUrl,
+            Kategori = u.Kategori.Isim
+        });
 }

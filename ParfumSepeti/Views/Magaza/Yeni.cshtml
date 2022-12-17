@@ -1,0 +1,19 @@
+﻿@model YeniVM
+
+<div class="panel w90p p48-r vbox gap48">
+    <div class="panel vbox p16-r">
+        
+        <h2 class="m0">Yeni Eklenen Ürünler</h2>
+        
+        <div class="hbox wrap p16-r gap16 ai-start jc-start">
+
+            @foreach (var urun in @Model.Items)
+            {
+                <partial name="_UrunCard" model="@urun" />
+            }
+
+        </div>
+    
+    </div>
+</div>
+

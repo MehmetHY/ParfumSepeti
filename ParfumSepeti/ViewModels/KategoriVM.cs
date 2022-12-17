@@ -2,9 +2,8 @@
 
 #pragma warning disable CS8618
 
-public class KategoriVM
+public class KategoriVM : PagedVM<UrunCardVM>
 {
+    public int Id { get; set; }
     public string Isim { get; set; }
-
-    public List<UrunCardVM> Urunler { get; set; } = new();
 }

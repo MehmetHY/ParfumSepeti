@@ -316,4 +316,88 @@ public class UrunManager : Manager<Urun>
         .OrderByDescending(u => u.EklenmeTarihi)
         .Take(count)
         .ToListAsync();
+
+    public async Task<Result<List<UrunCardVM>>> GetKategoriUrunCardsAsync(
+        int id,
+        int page = 1,
+        int pageSize = 20
+    )
+    {
+        if (!await _set.ValidPageAsync(page, pageSize))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz sayfa" }
+            };
+
+        var cards = await _set
+            .Where(u => u.KategoriId == id)
+            .AsNoTracking()
+            .OrderByDescending(u => u.EklenmeTarihi)
+            .Page(page, pageSize)
+            .Include(u => u.Kategori)
+            .ToUrunCardVMs()
+            .ToListAsync();
+
+        return new()
+        {
+            Object = cards
+        };
+    }
+
+    public async Task<Result<List<UrunCardVM>>> GetYeniUrunCardsAsync(
+        int page = 1,
+        int pageSize = 20
+    )
+    {
+        if (!await _set.ValidPageAsync(page, pageSize))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz sayfa" }
+            };
+
+        var cards = await _set
+            .AsNoTracking()
+            .OrderByDescending(u => u.EklenmeTarihi)
+            .Page(page, pageSize)
+            .Include(u => u.Kategori)
+            .ToUrunCardVMs()
+            .ToListAsync();
+
+        return new()
+        {
+            Object = cards
+        };
+    }
+
+    public async Task<Result<List<UrunCardVM>>> GetIndirimliUrunCardsAsync(
+        int page = 1,
+        int pageSize = 20
+    )
+    {
+        if (!await _set.ValidPageAsync(page, pageSize))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz sayfa" }
+            };
+
+        var cards = await _set
+            .Where(u => u.IndirimYuzdesi > 0)
+            .AsNoTracking()
+            .OrderByDescending(u => u.EklenmeTarihi)
+            .Page(page, pageSize)
+            .Include(u => u.Kategori)
+            .ToUrunCardVMs()
+            .ToListAsync();
+
+        return new()
+        {
+            Object = cards
+        };
+    }
 }

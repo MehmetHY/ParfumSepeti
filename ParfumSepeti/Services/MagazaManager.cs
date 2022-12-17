@@ -85,4 +85,90 @@ public class MagazaManager
 
         return vm;
     }
+
+    public async Task<Result<KategoriVM>> GetKategoriVMAsync(int id,
+                                                             int page = 1,
+                                                             int pageSize = 20)
+    {
+        var kategori = await _kategoriManager.GetFirstOrDefaultAsync(k => k.Id == id,
+                                                                     false);
+
+        if (kategori == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz kategori" }
+            };
+
+        var result = await _urunManager.GetKategoriUrunCardsAsync(id, page, pageSize);
+
+        if (result.Success)
+            return new()
+            {
+                Object = new()
+                {
+                    Id = id,
+                    Isim = kategori.Isim,
+                    Items = result.Object!,
+                    CurrentPage = page,
+                    PageSize = pageSize
+                }
+            };
+
+        return new()
+        {
+            Success = false,
+            Fatal = true,
+            Errors = result.Errors
+        };
+    }
+
+    public async Task<Result<IndirimVM>> GetIndirimVMAsync(int page = 1,
+                                                           int pageSize = 20)
+    {
+        var result = await _urunManager.GetIndirimliUrunCardsAsync(page, pageSize);
+
+        if (result.Success)
+            return new()
+            {
+                Object = new()
+                {
+                    Items = result.Object!,
+                    CurrentPage = page,
+                    PageSize = pageSize
+                }
+            };
+
+        return new()
+        {
+            Success = false,
+            Fatal = true,
+            Errors = result.Errors
+        };
+    }
+
+    public async Task<Result<YeniVM>> GetYeniVMAsync(int page = 1,
+                                                           int pageSize = 20)
+    {
+        var result = await _urunManager.GetYeniUrunCardsAsync(page, pageSize);
+
+        if (result.Success)
+            return new()
+            {
+                Object = new()
+                {
+                    Items = result.Object!,
+                    CurrentPage = page,
+                    PageSize = pageSize
+                }
+            };
+
+        return new()
+        {
+            Success = false,
+            Fatal = true,
+            Errors = result.Errors
+        };
+    }
 }

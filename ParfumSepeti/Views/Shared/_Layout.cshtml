@@ -1,5 +1,10 @@
 ﻿@inject SignInManager<Kullanici> signInManager
 @inject UserManager<Kullanici> userManager
+@inject KategoriManager kategoriManager
+
+@{
+    var kategoriler = await kategoriManager.GetAllAsync();
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -19,8 +24,8 @@
 
     <header class="panel">
         <div id="logo-div" class="hbox">
-            <a class="vbox jc-c ai-c logo text-xxxl text-nowrap ph16 nav-link color-primary"
-               id="logo" href="#">
+            <a asp-action="Anasayfa" asp-controller="Magaza" class="vbox jc-c ai-c logo text-xxxl text-nowrap ph16 nav-link color-primary"
+               id="logo">
                 Parfüm Sepeti
             </a>
         </div>
@@ -48,7 +53,7 @@
             }
             @if (User.IsInRole("admin"))
             {
-                <a class="nav-link text-l ph16 hbox ai-c jc-c" asp-action="Panel" asp-controller="Admin">Admin</a>
+                <a class="fa fa-tools color-primary nav-link text-l ph16 hbox ai-c jc-c" asp-action="Panel" asp-controller="Admin"></a>
             }
             <button class="fa fa-user nav-link text-l ph16"></button>
             <button class="fa fa-cart-shopping nav-link text-l ph16"></button>
@@ -56,11 +61,24 @@
     </header>
 
     <nav class="hbox jc-se panel2 wrap shadow-b-l">
-        <a class="nav-link ph16 pv12 grow hbox jc-c ai-c" href="#">Kadın</a>
-        <a class="nav-link ph16 pv12 grow hbox jc-c ai-c" href="#">Erkek</a>
-        <a class="nav-link ph16 pv12 grow hbox jc-c ai-c" href="#">Bakım</a>
-        <a class="nav-link ph16 pv12 grow hbox jc-c ai-c" href="#">Ev</a>
-        <a class="nav-link ph16 pv12 grow hbox jc-c ai-c" href="#">İndirim</a>
+
+        <a asp-action="Yeni"
+           asp-controller="Magaza"
+           class="nav-link ph16 pv12 grow hbox jc-c ai-c">
+            Yeni
+        </a>
+        <a asp-action="Indirim"
+           asp-controller="Magaza"
+           class="nav-link ph16 pv12 grow hbox jc-c ai-c">
+            İndirim
+        </a>
+
+        @foreach (var kategori in kategoriler)
+        {
+            <a asp-action="Kategori" asp-controller="Magaza" asp-route-id="@kategori.Id" class="nav-link ph16 pv12 grow hbox jc-c ai-c">
+                @kategori.Isim
+            </a>
+        }
     </nav>
 
     <main class="grow m64-r vbox ai-c">
@@ -85,11 +103,14 @@
             <div class="vbox gap8">
                 <h3 class="m0">Kategoriler</h3>
                 <ul class="li-no-style p0 m0">
-                    <li><a class="nav-link" href="#">Kadin</a></li>
-                    <li><a class="nav-link" href="#">Erkek</a></li>
-                    <li><a class="nav-link" href="#">Bakim</a></li>
-                    <li><a class="nav-link" href="#">Ev</a></li>
-                    <li><a class="nav-link" href="#">Indirim</a></li>
+                    @foreach (var kategori in kategoriler)
+                    {
+                        <li>
+                            <a asp-action="Kategori" asp-controller="Magaza" asp-route-id="@kategori.Id" class="nav-link">
+                                @kategori.Isim
+                            </a>
+                        </li>
+                    }
                 </ul>
             </div>
 

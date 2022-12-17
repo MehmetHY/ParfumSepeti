@@ -47,6 +47,7 @@ builder.Services.AddScoped<KategoriManager>();
 builder.Services.AddScoped<UrunManager>();
 builder.Services.AddScoped<KullaniciManager>();
 builder.Services.AddScoped<MagazaManager>();
+builder.Services.AddScoped<AdminManager>();
 
 
 var app = builder.Build();

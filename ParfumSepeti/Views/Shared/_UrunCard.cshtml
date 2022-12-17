@@ -1,7 +1,7 @@
 ﻿@model UrunCardVM
 
 <a asp-action="Urun" asp-controller="Magaza" asp-route-id="@Model.Id" class="urun-karti">
-    <img src="@Model.KapakUrl" alt="resim" />
+    <img src="~/@Model.KapakUrl" alt="resim" />
     <div>
         <h3>@Model.Baslik</h3>
         <h4>@Model.Model</h4>

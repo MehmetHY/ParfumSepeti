@@ -11,10 +11,44 @@ public class MagazaController : Controller
         _magazaManager = magazaManager;
     }
 
+    [HttpGet]
     public async Task<IActionResult> Anasayfa()
     {
         var vm = await _magazaManager.GetAnasayfaVMAsync();
 
         return View(vm);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Kategori(int id, int page = 1, int pagaSize = 20)
+    {
+        var result = await _magazaManager.GetKategoriVMAsync(id, page, pagaSize);
+
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest(result.ToString());
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Indirim(int page = 1, int pageSize = 20)
+    {
+        var result = await _magazaManager.GetIndirimVMAsync(page, pageSize);
+
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Yeni(int page = 1, int pageSize = 20)
+    {
+        var result = await _magazaManager.GetYeniVMAsync(page, pageSize);
+
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest();
     }
 }
