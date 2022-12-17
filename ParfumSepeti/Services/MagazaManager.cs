@@ -149,7 +149,7 @@ public class MagazaManager
     }
 
     public async Task<Result<YeniVM>> GetYeniVMAsync(int page = 1,
-                                                           int pageSize = 20)
+                                                     int pageSize = 20)
     {
         var result = await _urunManager.GetYeniUrunCardsAsync(page, pageSize);
 
@@ -169,6 +169,38 @@ public class MagazaManager
             Success = false,
             Fatal = true,
             Errors = result.Errors
+        };
+    }
+
+    public async Task<Result<AramaVM>> GetAramaVMAsync(string metin,
+                                                       int page = 1,
+                                                       int pageSize = 20)
+    {
+        if (string.IsNullOrWhiteSpace(metin))
+            return new()
+            {
+                Object = new()
+            };
+
+        var result = await _urunManager.GetAramaUrunCards(metin, page, pageSize);
+
+        if (!result.Success)
+            return new()
+            {
+                Success = false,
+                Fatal = result.Fatal,
+                Errors = result.Errors
+            };
+
+        return new()
+        {
+            Object = new()
+            {
+                AramaMetni = metin,
+                Items = result.Object!,
+                CurrentPage = page,
+                PageSize = pageSize
+            }
         };
     }
 }

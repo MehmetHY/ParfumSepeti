@@ -38,7 +38,7 @@ public class MagazaController : Controller
         if (result.Success)
             return View(result.Object);
 
-        return BadRequest();
+        return BadRequest(result.ToString());
     }
 
     [HttpGet]
@@ -49,6 +49,19 @@ public class MagazaController : Controller
         if (result.Success)
             return View(result.Object);
 
-        return BadRequest();
+        return BadRequest(result.ToString());
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Arama(string metin,
+                                           int page = 1,
+                                           int pageSize = 20)
+    {
+        var result = await _magazaManager.GetAramaVMAsync(metin, page, pageSize);
+
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest(result.ToString());
     }
 }

@@ -30,10 +30,10 @@
             </a>
         </div>
 
-        <form id="search-form" class="p12 hbox">
+        <form asp-action="Arama" asp-controller="Magaza" id="search-form" class="p12 hbox" method="get">
             <div class="inputbox hbox grow">
                 <input class="input ph12 grow" type="search"
-                       placeholder="ara..." />
+                       placeholder="ara..." name="metin" />
                 <button type="submit"
                         class="fa fa-search nav-link ph8 text-l"></button>
             </div>

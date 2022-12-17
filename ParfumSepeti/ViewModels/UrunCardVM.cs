@@ -25,7 +25,7 @@ public class UrunCardVM
 
 public static class UrunCardVMExtension
 {
-    public static IQueryable<UrunCardVM> ToUrunCardVMs(this IQueryable<Urun> queryable)
+    public static IQueryable<UrunCardVM> AsUrunCardVMs(this IQueryable<Urun> queryable)
         => queryable.Select(u => new UrunCardVM
         {
             Id = u.Id,

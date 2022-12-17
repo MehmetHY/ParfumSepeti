@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ParfumSepeti.Data;
 using ParfumSepeti.Models;
 using ParfumSepeti.ViewModels;
@@ -337,7 +338,7 @@ public class UrunManager : Manager<Urun>
             .OrderByDescending(u => u.EklenmeTarihi)
             .Page(page, pageSize)
             .Include(u => u.Kategori)
-            .ToUrunCardVMs()
+            .AsUrunCardVMs()
             .ToListAsync();
 
         return new()
@@ -364,7 +365,7 @@ public class UrunManager : Manager<Urun>
             .OrderByDescending(u => u.EklenmeTarihi)
             .Page(page, pageSize)
             .Include(u => u.Kategori)
-            .ToUrunCardVMs()
+            .AsUrunCardVMs()
             .ToListAsync();
 
         return new()
@@ -392,7 +393,34 @@ public class UrunManager : Manager<Urun>
             .OrderByDescending(u => u.EklenmeTarihi)
             .Page(page, pageSize)
             .Include(u => u.Kategori)
-            .ToUrunCardVMs()
+            .AsUrunCardVMs()
+            .ToListAsync();
+
+        return new()
+        {
+            Object = cards
+        };
+    }
+
+    public async Task<Result<List<UrunCardVM>>> GetAramaUrunCards(
+        string metin,
+        int page = 1,
+        int pageSize = 20
+    )
+    {
+        var query = _set.AsNoTracking().Where(u => u.Baslik.Contains(metin));
+
+        if (!await query.ValidPageAsync(page, pageSize))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz sayfa" }
+            };
+
+        var cards = await query
+            .Page(page, pageSize)
+            .AsUrunCardVMs()
             .ToListAsync();
 
         return new()
