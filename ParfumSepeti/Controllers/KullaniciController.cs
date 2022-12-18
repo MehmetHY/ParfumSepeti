@@ -161,6 +161,19 @@ public class KullaniciController : Controller
         return View(vm);
     }
 
+    [Authorize]
+    public async Task<IActionResult> IstekListesi(int page = 1, int pageSize = 20)
+    {
+        var result = await _kullaniciManager.GetIstekListesiVMAsync(User.Identity?.Name,
+                                                                    page,
+                                                                    pageSize);
+
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest(result.ToString());
+    }
+
     #region API
     [AcceptVerbs("GET", "POST")]
     public async Task<JsonResult> UserNameAvailable(string kullaniciAdi)

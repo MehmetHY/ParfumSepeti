@@ -183,4 +183,53 @@ public class KullaniciManager : Manager<Kullanici>
 
         return new();
     }
+
+    public async Task<Result<IstekListesiVM>> GetIstekListesiVMAsync(string? isim,
+                                                                     int page = 1,
+                                                                     int pageSize = 20)
+    {
+        if (string.IsNullOrWhiteSpace(isim))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçeriz kullanıcı" }
+            };
+
+        var kullanici = await _set
+            .AsNoTracking()
+            .Where(k => k.UserName == isim)
+            .Include(k => k.IstekListesi)
+            .FirstOrDefaultAsync();
+
+        if (kullanici == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçeriz kullanıcı" }
+            };
+
+        if (!kullanici.IstekListesi.ValidPage(page, pageSize))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçeriz sayfa" }
+            };
+
+        var cards = kullanici.IstekListesi
+            .Page(page, pageSize)
+            .AsUrunCardVMs();
+
+        return new()
+        {
+            Object = new()
+            {
+                Items = cards,
+                CurrentPage = page,
+                PageSize = pageSize
+            }
+        };
+    }
 }

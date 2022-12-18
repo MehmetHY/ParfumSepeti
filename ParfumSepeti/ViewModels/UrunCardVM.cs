@@ -36,4 +36,17 @@ public static class UrunCardVMExtension
             KapakUrl = u.KapakUrl,
             Kategori = u.Kategori.Isim
         });
+
+    public static List<UrunCardVM> AsUrunCardVMs(this IEnumerable<Urun> urunler)
+        => urunler.Select(u => new UrunCardVM
+        {
+            Id = u.Id,
+            Baslik = u.Baslik,
+            Model = u.Model,
+            Fiyat = u.Fiyat,
+            Indirim = u.IndirimYuzdesi,
+            KapakUrl = u.KapakUrl,
+            Kategori = u.Kategori.Isim
+        })
+        .ToList();
 }
