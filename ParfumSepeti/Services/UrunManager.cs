@@ -142,7 +142,6 @@ public class UrunManager : Manager<Urun>
     {
         var urun = await _set
             .Include(u => u.Kategori)
-            .Include(u => u.SepetOgeleri)
             .Include(u => u.Isteyenler)
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == id);
@@ -163,8 +162,7 @@ public class UrunManager : Manager<Urun>
                 Model = urun.Model,
                 Kategori = urun.Kategori.Isim,
                 KapakUrl = urun.KapakUrl,
-                IstekSayisi = urun.Isteyenler.Count,
-                SepetSayisi = urun.SepetOgeleri.Count
+                IstekSayisi = urun.Isteyenler.Count
             }
         };
     }

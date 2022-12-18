@@ -14,7 +14,5 @@ public class UrunSilVM
 
     public string KapakUrl { get; set; }
 
-    public int SepetSayisi { get; set; }
-
     public int IstekSayisi { get; set; }
 }

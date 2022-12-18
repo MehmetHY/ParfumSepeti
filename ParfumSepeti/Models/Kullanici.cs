@@ -9,6 +9,4 @@ public class Kullanici : IdentityUser
     public List<Urun> IstekListesi { get; set; }
 
     public List<Siparis> Siparisler { get; set; }
-
-    public Sepet Sepet { get; set; }
 }

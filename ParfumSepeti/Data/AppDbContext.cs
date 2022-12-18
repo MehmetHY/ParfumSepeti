@@ -10,8 +10,6 @@ public class AppDbContext : IdentityDbContext<Kullanici>
 {
     public DbSet<Kategori> Kategori { get; set; }
     public DbSet<Urun> Urun { get; set; }
-    public DbSet<SepetOgesi> SepetOgesi { get; set; }
-    public DbSet<Sepet> Sepet { get; set; }
     public DbSet<SiparisOgesi> SiparisOgesi { get; set; }
     public DbSet<Siparis> Siparis { get; set; }
 

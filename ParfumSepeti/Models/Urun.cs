@@ -28,7 +28,5 @@ public class Urun
 
     public List<Kullanici> Isteyenler { get; set; }
 
-    public List<SepetOgesi> SepetOgeleri { get; set; }
-
     public DateTime EklenmeTarihi { get; set; }
 }

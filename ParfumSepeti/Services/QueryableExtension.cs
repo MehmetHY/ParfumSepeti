@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace ParfumSepeti.Services;
 
@@ -10,10 +11,10 @@ public static class QueryableExtension
                                                     int pageSize)
         => queryable.Skip((page - 1) * pageSize).Take(pageSize);
 
-    public static IEnumerable<TEntity> Page<TEntity>(this IEnumerable<TEntity> entities,
+    public static List<TEntity> Page<TEntity>(this IEnumerable<TEntity> entities,
                                                      int page,
                                                      int pageSize)
-        => entities.Skip((page - 1) * pageSize).Take(pageSize);
+        => entities.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
     public static async Task<bool> ValidPageAsync<TEntity>(
         this IQueryable<TEntity> queryable,
@@ -47,5 +48,16 @@ public static class QueryableExtension
             ++pageCount;
 
         return page <= pageCount;
+    }
+
+    public static TResult? Reduce<TEntity, TResult>(
+        this IEnumerable<TEntity> entities,
+        Func<TEntity, TResult?, TResult?> callback,
+        TResult? initial = default)
+    {
+        foreach (var entity in entities)
+            initial = callback(entity, initial);
+
+        return initial;
     }
 }

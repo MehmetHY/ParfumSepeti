@@ -33,12 +33,20 @@ builder.Services.AddIdentity<Kullanici, IdentityRole>(options =>
     .AddEntityFrameworkStores<AppDbContext>();
 
 
-// cookies
+// cookies & session
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Kullanici/Giris";
     options.LogoutPath = "/Kullanici/Cikis";
     options.AccessDeniedPath = "/Kullanici/ErisimEngellendi";
+});
+
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromDays(7);
+    options.Cookie.IsEssential = true;
 });
 
 
@@ -126,6 +134,8 @@ using (var scope = app.Services.CreateScope())
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

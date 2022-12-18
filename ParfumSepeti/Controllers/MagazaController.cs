@@ -75,4 +75,16 @@ public class MagazaController : Controller
 
         return BadRequest(result.ToString());
     }
+
+    //[HttpGet]
+    //public async Task<IActionResult> Sepet()
+    //{
+        
+    //}
+
+    //[HttpPost]
+    //public async Task<IActionResult> SepettenKaldir(int id)
+    //{
+        
+    //}
 }

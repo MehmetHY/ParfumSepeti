@@ -1,4 +1,5 @@
-﻿using ParfumSepeti.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using ParfumSepeti.Data;
 using ParfumSepeti.ViewModels;
 
 namespace ParfumSepeti.Services;
@@ -8,14 +9,17 @@ public class MagazaManager
     private readonly AppDbContext _db;
     private readonly KategoriManager _kategoriManager;
     private readonly UrunManager _urunManager;
+    private readonly KullaniciManager _kullaniciManager;
 
     public MagazaManager(AppDbContext db,
                          KategoriManager kategoriManager,
-                         UrunManager urunManager)
+                         UrunManager urunManager,
+                         KullaniciManager kullaniciManager)
     {
         _db = db;
         _kategoriManager = kategoriManager;
         _urunManager = urunManager;
+        _kullaniciManager = kullaniciManager;
     }
 
     public async Task<AnasayfaVM> GetAnasayfaVMAsync()

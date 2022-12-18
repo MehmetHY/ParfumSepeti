@@ -15,8 +15,7 @@ public static class UserManagerExtension
     {
         var kullanici = new Kullanici
         {
-            UserName = model.KullaniciAdi,
-            Sepet = new()
+            UserName = model.KullaniciAdi
         };
 
         var identityResult = await userManager.CreateAsync(kullanici, model.Sifre);
