@@ -135,6 +135,11 @@ header {
     font-weight: bold;
 }
 
+/* URUN */
+#urun-img-box {
+    max-width: 50%;
+}
+
 /* RESPONSIVE */
 @media screen and (max-width: 800px) {
     header {
@@ -144,6 +149,10 @@ header {
 
         grid-template-columns: auto max-content;
         grid-template-rows: 64px 64px;
+    }
+
+    #urun-img-box {
+        max-width: 100%;
     }
 }
 

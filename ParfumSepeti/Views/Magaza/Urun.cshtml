@@ -1,0 +1,50 @@
+﻿@model UrunVM
+
+<div class="panel vbox jc-c ai-c p32-r gap24-r">
+    <h1 class="m0">@Model.Baslik</h1>
+    <div class="hbox-r800 gap36-r p16-r">
+        <div id="urun-img-box" class="vbox jc-start ai-c">
+            <img class="w100p p16 panel" src="~/@Model.KapakUrl" alt="resim" />
+        </div>
+        <div class="vbox ai-start gap36-r grow">
+            <h2 class="m0">@Model.Model</h2>
+            <div class="vbox ai-start panel p16 gap12">
+                @if (Model.IndirimYuzdesi > 0)
+                {
+                    <div class="hbox ai-c gap12">
+                        <span class="strike text-l">@Model.Fiyat.ToString("F") TL</span>
+                        <span class="text-l">(@(Model.IndirimYuzdesi)%)</span>
+                    </div>
+                }
+                <span class="text-xxl bold color-primary">@Model.IndirimliFiyat TL</span>
+            </div>
+            <div class="panel p16">
+                <button class="btn2-danger ph8 pv4">
+                    İstek Listesine
+                    Ekle
+                </button>
+            </div>
+            <div class="hbox-r500 gap48-r ai-c jc-c panel p16">
+                <span class="hbox gap8 ai-c jc-c">
+                    <button class="fa fa-minus btn2"></button>
+                    <span>1</span>
+                    <button class="fa fa-plus btn2"></button>
+                </span>
+                <button class="btn-primary ph36 pv12 text-l">
+                    Sepete
+                    Ekle
+                </button>
+            </div>
+            <div class="panel vbox p16 gap12 as-s">
+                <h3 class="m0">Açıklama</h3>
+                <p class="m0">
+                    @Model.Aciklama
+                </p>
+            </div>
+            <div class="panel vbox p16 gap12 as-s">
+                <h3 class="m0">Kargo</h3>
+                <p class="m0">@Model.KargoBilgisi</p>
+            </div>
+        </div>
+    </div>
+</div>

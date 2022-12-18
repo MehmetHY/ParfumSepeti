@@ -64,4 +64,15 @@ public class MagazaController : Controller
 
         return BadRequest(result.ToString());
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Urun(int id)
+    {
+        var result = await _magazaManager.GetUrunVMAsync(id);
+
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest(result.ToString());
+    }
 }

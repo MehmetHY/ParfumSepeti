@@ -203,4 +203,22 @@ public class MagazaManager
             }
         };
     }
+
+    public async Task<Result<UrunVM>> GetUrunVMAsync(int id)
+    {
+        var urun = await _urunManager.GetFirstOrDefaultAsync(u => u.Id == id, false);
+
+        if (urun == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz ürün" }
+            };
+
+        return new()
+        {
+            Object = urun.ToUrunVM()
+        };
+    }
 }
