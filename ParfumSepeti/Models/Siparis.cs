@@ -11,6 +11,8 @@ public class Siparis
 
     public List<SiparisOgesi> Ogeler { get; set; }
 
+    public DateTime OlusturmaTarihi { get; set; }
+
     public string OdemeDurumu { get; set; }
 
     public string KargoDurumu { get; set; }

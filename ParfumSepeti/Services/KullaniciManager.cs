@@ -202,7 +202,9 @@ public class KullaniciManager : Manager<Kullanici>
             .AsNoTracking()
             .Where(k => k.UserName == isim)
             .Include(k => k.IstekListesi)
+            .ThenInclude(u => u.Kategori)
             .FirstOrDefaultAsync();
+
 
         if (kullanici == null)
             return new()
@@ -233,5 +235,67 @@ public class KullaniciManager : Manager<Kullanici>
                 PageSize = pageSize
             }
         };
+    }
+
+    public async Task<bool> IstekListesindeMi(string? kullaniciAdi, int urunId)
+    {
+        if (string.IsNullOrWhiteSpace(kullaniciAdi))
+            return false;
+
+        var kullanici = await _set
+            .Include(k => k.IstekListesi)
+            .FirstOrDefaultAsync(k => k.UserName == kullaniciAdi);
+
+        if (kullanici == null)
+            return false;
+
+        return kullanici.IstekListesi.Any(u => u.Id == urunId);
+    }
+
+    public async Task IstekListesineEkle(string? kullaniciAdi, int urunId)
+    {
+        if (string.IsNullOrWhiteSpace(kullaniciAdi))
+            return;
+
+        var kullanici = await _set
+            .Include(k => k.IstekListesi)
+            .FirstOrDefaultAsync(k => k.UserName == kullaniciAdi);
+
+        if (kullanici == null)
+            return;
+
+        if (kullanici.IstekListesi.Any(u => u.Id == urunId))
+            return;
+
+        var urun = await _db.Urun
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == urunId);
+
+        if (urun == null)
+            return;
+
+        kullanici.IstekListesi.Add(urun);
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task IstekListesindenKaldir(string? kullaniciAdi, int urunId)
+    {
+        if (string.IsNullOrWhiteSpace(kullaniciAdi))
+            return;
+
+        var kullanici = await _set
+            .Include(k => k.IstekListesi)
+            .FirstOrDefaultAsync(k => k.UserName == kullaniciAdi);
+
+        if (kullanici == null)
+            return;
+
+        var urun = kullanici.IstekListesi.FirstOrDefault(u => u.Id == urunId);
+
+        if (urun == null)
+            return;
+
+        kullanici.IstekListesi.Remove(urun);
+        await _db.SaveChangesAsync();
     }
 }

@@ -20,7 +20,7 @@ public class UrunCardVM
 
     public int Indirim { get; set; }
 
-    public string IndirimliFiyat => (Fiyat * (100 - Indirim) / 100).ToString("F");
+    public string IndirimliFiyat => (Fiyat * (100 - Indirim) / 100).ToString("F2");
 }
 
 public static class UrunCardVMExtension

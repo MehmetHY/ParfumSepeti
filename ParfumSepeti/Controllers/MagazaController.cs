@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ParfumSepeti.Services;
+using ParfumSepeti.ViewModels;
 
 namespace ParfumSepeti.Controllers;
 public class MagazaController : Controller
@@ -76,15 +78,76 @@ public class MagazaController : Controller
         return BadRequest(result.ToString());
     }
 
-    //[HttpGet]
-    //public async Task<IActionResult> Sepet()
-    //{
-        
-    //}
+    [HttpGet]
+    public async Task<IActionResult> Sepet()
+    {
+        var vm = await _magazaManager.GetSepetVMAsync(HttpContext.Session);
 
-    //[HttpPost]
-    //public async Task<IActionResult> SepettenKaldir(int id)
-    //{
-        
-    //}
+        return View(vm);
+    }
+
+    [HttpPost]
+    public IActionResult SepettenKaldir(int urunId)
+    {
+        _magazaManager.SepettenKaldir(HttpContext.Session, urunId);
+
+        return RedirectToAction(nameof(Sepet));
+    }
+
+    [Authorize]
+    [HttpGet]
+    public IActionResult OdemeBilgisi()
+    {
+        var sepetValid = _magazaManager.SepetValid(HttpContext.Session);
+
+        if (sepetValid)
+            return View();
+
+        return BadRequest("Geçersiz Sepet");
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> SiparisOlustur(SiparisBilgiVM vm)
+    {
+        if (ModelState.IsValid)
+        {
+            var result = await _magazaManager.SiparisOlusturAsync(HttpContext.Session,
+                                                                  vm,
+                                                                  User.Identity?.Name);
+
+            if (result.Success)
+                return Ok(result.Object!.Id);
+
+            if (result.Fatal)
+                return BadRequest(result.ToString());
+
+            ModelState.AddResultErrors(result);
+        }
+
+        return View(nameof(OdemeBilgisi), vm);
+    }
+
+    #region API
+    [HttpPost]
+    public async Task<IActionResult> SepeteEkle([FromBody] SepetEkleVM vm)
+    {
+        var result = await _magazaManager.SepeteEkleAsync(HttpContext.Session,
+                                                          vm.UrunId,
+                                                          vm.Adet);
+
+        if (result.Success)
+            return NoContent();
+
+        return BadRequest();
+    }
+
+    [HttpGet]
+    public ActionResult<bool> SepetteMi(int id)
+    {
+        var result = _magazaManager.SepetteMi(HttpContext.Session, id);
+
+        return result;
+    }
+    #endregion
 }

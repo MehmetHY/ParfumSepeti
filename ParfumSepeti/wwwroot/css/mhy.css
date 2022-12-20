@@ -9,6 +9,7 @@
     --active-contrast: #000000;
     --disabled: #d6d6d680;
     --success: #9df57d;
+    --success-contrast: black;
     --danger: #f99797;
     --danger-contrast: black;
     --warning: #f9ea97;
@@ -168,12 +169,12 @@
 /* --------------------------------------------------------- */
 /* BUTTON */
 /* --------------------------------------------------------- */
-.nav-link, .btn-primary, .btn-danger, .btn2, .btn2-danger {
+.nav-link, .btn-primary, .btn-success, .btn-danger, .btn2, .btn2-danger {
     cursor: pointer;
     text-decoration: none;
 }
 
-a.btn-primary, a.btn-danger, a.btn2, a.btn2-danger {
+a.btn-primary, a.btn-success, a.btn-danger, a.btn2, a.btn2-danger {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -205,6 +206,17 @@ a.btn-primary, a.btn-danger, a.btn2, a.btn2-danger {
     .btn-primary:hover {
         background-color: transparent;
         color: var(--primary);
+    }
+
+.btn-success {
+    background-color: var(--success);
+    color: var(--success-contrast);
+    border: 2px solid var(--success)
+}
+
+    .btn-success:hover {
+        background-color: transparent;
+        color: var(--success);
     }
 
 .btn-danger {
@@ -535,6 +547,7 @@ a.btn-primary, a.btn-danger, a.btn2, a.btn2-danger {
         .checkbox input[type=checkbox]:checked ~ .box .mark {
             transform: scale(1);
         }
+
     .checkbox .toggle {
         transform: scale(0);
         visibility: hidden;

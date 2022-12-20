@@ -10,6 +10,9 @@ public class SiparisOgesi
 
     public string UrunIsmi { get; set; }
 
+    public int? UrunId { get; set; }
+    public Urun? Urun { get; set; }
+
     [Column(TypeName = "decimal(10,2)")]
     public decimal Fiyat { get; set; }
 

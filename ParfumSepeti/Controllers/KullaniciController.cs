@@ -182,5 +182,37 @@ public class KullaniciController : Controller
 
         return Json(user == null);
     }
+
+    [HttpGet]
+    public ActionResult<bool> GirisYapildiMi()
+    {
+        return _signInManager.IsSignedIn(User);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<bool>> IstekListesindeMi(int id)
+    {
+        var result = await _kullaniciManager.IstekListesindeMi(User.Identity?.Name, id);
+
+        return result;
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> IstekListesineEkle([FromBody] IstekListesineEkleVM vm)
+    {
+        await _kullaniciManager.IstekListesineEkle(User.Identity?.Name, vm.UrunId);
+
+        return NoContent();
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> IstekListesindenKaldir(
+        [FromBody] IstekListesindenKaldirVM vm
+    )   
+    {
+        await _kullaniciManager.IstekListesindenKaldir(User.Identity?.Name, vm.UrunId);
+
+        return NoContent();
+    }
     #endregion
 }

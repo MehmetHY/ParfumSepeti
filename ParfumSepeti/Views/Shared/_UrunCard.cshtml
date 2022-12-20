@@ -9,7 +9,7 @@
         <div class="fiyat-box">
             @if (Model.Indirim > 0)
             {
-                <span class="eski">@Model.Fiyat.ToString("F") TL</span>
+                <span class="eski">@Model.Fiyat.ToString("F2") TL</span>
                 <span class="yuzde">(@(Model.Indirim)%)</span>
             }
             <span class="fiyat">@Model.IndirimliFiyat TL</span>

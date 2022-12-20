@@ -23,7 +23,7 @@ public class UrunVM
     public string KargoBilgisi { get; set; }
 
     public string IndirimliFiyat
-        => (Fiyat * (100 - IndirimYuzdesi) / 100).ToString("F");
+        => (Fiyat * (100 - IndirimYuzdesi) / 100).ToString("F2");
 }
 
 public static class UrunExtension

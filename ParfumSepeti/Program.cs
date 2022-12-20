@@ -58,6 +58,15 @@ builder.Services.AddScoped<MagazaManager>();
 builder.Services.AddScoped<AdminManager>();
 
 
+// api
+//builder.Services.AddCors(options =>
+//    options.AddPolicy("AllowAll", config => config.AllowAnyHeader()
+//                                                  .AllowAnyOrigin()
+//                                                  .AllowAnyMethod())
+//);
+//builder.Services.AddEndpointsApiExplorer();
+
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -131,6 +140,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+//app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
