@@ -4,6 +4,7 @@ using ParfumSepeti.Const;
 using ParfumSepeti.Data;
 using ParfumSepeti.Models;
 using ParfumSepeti.ViewModels;
+using Stripe.Checkout;
 
 namespace ParfumSepeti.Services;
 
@@ -624,5 +625,63 @@ public class KullaniciManager : Manager<Kullanici>
         await _db.SaveChangesAsync();
 
         return new();
+    }
+
+    public async Task<Result<string>> GetSiparisOdemeUrlAsync(string? kullaniciAdi,
+                                                              int siparisId)
+    {
+        if (string.IsNullOrWhiteSpace(kullaniciAdi))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Kullanıcı" }
+            };
+
+        var kullanici = await _set
+            .Include(k => k.Siparisler)
+            .FirstOrDefaultAsync(k => k.UserName == kullaniciAdi);
+
+        if (kullanici == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Kullanıcı" }
+            };
+
+        var siparis = kullanici.Siparisler.FirstOrDefault(s => s.Id == siparisId);
+
+        if (siparis == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Sipariş" }
+            };
+
+        if (siparis.OdemeDurumu == OdemeDurumu.ODENDI)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Sipariş zaten ödendi" }
+            };
+
+        var stripeService = new SessionService();
+        var stripeSession = stripeService.Get(siparis.SessionId);
+
+        if (stripeSession == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Servis hatası ya da geçersiz sipariş" }
+            };
+
+        return new()
+        {
+            Object = stripeSession.Url
+        };
     }
 }

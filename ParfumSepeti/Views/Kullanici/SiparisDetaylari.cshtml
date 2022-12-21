@@ -16,7 +16,10 @@
 
             @if (!odendi)
             {
-                <a asp-action="SiparisOde" asp-route-id="@Model.SiparisId" class="fa fa-money-bill-alt text-xxl bold ph12 pv8 btn2-success"></a>
+                <form asp-action="SiparisOde" method="post">
+                    <input name="siparisId" value="@Model.SiparisId" hidden />
+                    <button type="submit" class="fa fa-money-bill-alt text-xxl bold ph12 pv8 btn2-success"></button>
+                </form>
             }
 
             @if (!gonderildi)

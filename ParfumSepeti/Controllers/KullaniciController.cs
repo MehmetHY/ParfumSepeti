@@ -256,6 +256,23 @@ public class KullaniciController : Controller
         return BadRequest(result.ToString());
     }
 
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> SiparisOde(int siparisId)
+    {
+        var result = await _kullaniciManager.GetSiparisOdemeUrlAsync(User.Identity?.Name,
+                                                                     siparisId);
+
+        if (result.Success)
+        {
+            Response.Headers.Location = result.Object;
+
+            return new StatusCodeResult(303);
+        }
+
+        return BadRequest(result.ToString());
+    }
+
     #region API
     [AcceptVerbs("GET", "POST")]
     public async Task<JsonResult> UserNameAvailable(string kullaniciAdi)
