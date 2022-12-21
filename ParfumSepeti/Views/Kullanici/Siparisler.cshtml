@@ -1,0 +1,64 @@
+﻿@model KullaniciSiparisleriVM
+
+<div class="panel as-s p64-r vbox gap36">
+    <h1 class="m0 text-center">Siparişler</h1>
+    <table class="table panel p16">
+        <thead>
+            <tr>
+                <th class="">Ürünler</th>
+                <th class="">Toplam</th>
+                <th class="text-nowrap">Oluşturma Tarihi</th>
+                <th class="text-nowrap">Ödeme Durumu</th>
+                <th class="text-nowrap">Kargo Durumu</th>
+                <th class="">Detaylar</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td class="w90p">
+                        <div class="vbox gap16 p12">
+
+                            @foreach (var oge in item.Ogeler)
+                            {
+                                <div class="hbox jc-sb">
+                                    <span class="bold">@oge.UrunIsmi</span>
+                                    <div class="hbox gap12 ai-c">
+                                        <span>@oge.Fiyat.ToString("F2") TL</span>
+                                        <span class="fa fa-multiply"></span>
+                                        <span>@oge.Adet</span>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                    </td>
+                    <td class="text-nowrap bold text-l">@item.Toplam.ToString("F2") TL</td>
+                    <td class="text-center">@item.OlusuturmaTarihi.ToString()</td>
+                    <td class="text-center">
+                        <span class="@(item.OdemeDurumu == OdemeDurumu.ODENDI ?
+                                           "border2-success color-success" :
+                                           "border2-danger color-danger") p8">
+                            @item.OdemeDurumu
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <span class="@(item.KargoDurumu == KargoDurumu.GONDERILDI ?
+                                           "border2-success color-success" :
+                                           "border2-danger color-danger") p8">
+                            @item.KargoDurumu
+                        </span>
+                    </td>
+                    <td>
+                        <div class="hbox jc-c ai-c gap4">
+                            <a asp-action="SiparisDetaylari" asp-route-id="@item.Id" class="fa fa-list-ul text-xxl btn2 p8"></a>
+                        </div>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>

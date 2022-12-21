@@ -13,6 +13,10 @@ public class Siparis
 
     public DateTime OlusturmaTarihi { get; set; }
 
+    public DateTime? OdemeTarihi { get; set; }
+
+    public DateTime? KargoyaVerilmeTarihi { get; set; }
+
     public string OdemeDurumu { get; set; }
 
     public string KargoDurumu { get; set; }

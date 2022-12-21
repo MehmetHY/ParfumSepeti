@@ -112,12 +112,19 @@ public class MagazaController : Controller
     {
         if (ModelState.IsValid)
         {
+            var domain = $"{Request.Scheme}://{Request.Host}";
+
             var result = await _magazaManager.SiparisOlusturAsync(HttpContext.Session,
                                                                   vm,
-                                                                  User.Identity?.Name);
+                                                                  User.Identity?.Name,
+                                                                  domain);
 
             if (result.Success)
-                return Ok(result.Object!.Id);
+            {
+                Response.Headers.Add("location", result.Object!.OdemeUrl);
+
+                return new StatusCodeResult(303);
+            }
 
             if (result.Fatal)
                 return BadRequest(result.ToString());
@@ -126,6 +133,20 @@ public class MagazaController : Controller
         }
 
         return View(nameof(OdemeBilgisi), vm);
+    }
+
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> SiparisOnayla(int siparisId)
+    {
+        var result = await _magazaManager.SiparisiOnaylaAsync(HttpContext.Session,
+                                                              User.Identity?.Name,
+                                                              siparisId);
+
+        if (result.Fatal)
+            return BadRequest(result.ToString());
+
+        return View(result);
     }
 
     #region API

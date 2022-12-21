@@ -1,0 +1,26 @@
+﻿@model Result
+
+<main class="grow m64-r vbox ai-c">
+    <div class="panel vbox jc-c ai-c p32-r gap12 shadow-b-l">
+
+        @if (Model.Success)
+        {
+            <h1 class="m0">
+                <span class="fa fa-check-circle color-success"></span>
+                <span class="color-success ">Ödeme Başarılı!</span>
+            </h1>
+            <p>Siparişiniz, ürün sayfasında belirtilen süre içinde kargoya verilecektir.</p>
+        }
+        else
+        {
+            <h1 class="m0">
+                <span class="fa fa-xmark-circle color-danger"></span>
+                <span class="color-danger ">Ödeme Başarısız!</span>
+            </h1>
+            <p>@Model.ToString()</p>
+        }
+
+        <a asp-action="Siparisler" asp-controller="Kullanici" class="btn-primary text-l bold pv12 ph24">Siparişlerim</a>
+
+    </div>
+</main>

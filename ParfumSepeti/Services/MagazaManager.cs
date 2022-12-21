@@ -3,6 +3,7 @@ using ParfumSepeti.Const;
 using ParfumSepeti.Data;
 using ParfumSepeti.Models;
 using ParfumSepeti.ViewModels;
+using Stripe.Checkout;
 
 namespace ParfumSepeti.Services;
 
@@ -320,9 +321,11 @@ public class MagazaManager
         return sepetSession != null && sepetSession.Items.Any(i => i.UrunId == id);
     }
 
-    public async Task<Result<Siparis>> SiparisOlusturAsync(ISession session,
-                                                           SiparisBilgiVM vm,
-                                                           string? kullaniciAdi)
+    public async Task<Result<SiparisOlusturVM>> SiparisOlusturAsync(
+        ISession session,
+        SiparisBilgiVM vm,
+        string? kullaniciAdi,
+        string domain)
     {
         if (string.IsNullOrWhiteSpace(kullaniciAdi))
             return new()
@@ -356,6 +359,14 @@ public class MagazaManager
 
         var ogeler = new List<SiparisOgesi>();
 
+        var stripeOptions = new SessionCreateOptions
+        {
+            LineItems = new(),
+            PaymentMethodTypes = new() { "card" },
+            Mode = "payment",
+            CancelUrl = $"{domain}/Magaza/Sepet"
+        };
+
         foreach (var item in sepetSession.Items)
         {
             var urun = await _db.Urun
@@ -379,6 +390,22 @@ public class MagazaManager
             };
 
             ogeler.Add(oge);
+
+            var stripeLineOption = new SessionLineItemOptions
+            {
+                PriceData = new()
+                {
+                    UnitAmount = (int)(oge.Fiyat * 100),
+                    Currency = "try",
+                    ProductData = new()
+                    {
+                        Name = oge.UrunIsmi
+                    }
+                },
+                Quantity = oge.Adet
+            };
+
+            stripeOptions.LineItems.Add(stripeLineOption);
         }
 
         if (ogeler.Count < 1)
@@ -393,8 +420,8 @@ public class MagazaManager
         {
             KullaniciId = kullanici.Id,
             Ogeler = ogeler,
-            OdemeDurumu = OdeneDurumu.ODENMEDI,
-            KargoDurumu = KargoDurumu.BEKLEMEDE,
+            OdemeDurumu = OdemeDurumu.ODENMEDI,
+            KargoDurumu = KargoDurumu.GONDERILMEDI,
             OlusturmaTarihi = DateTime.Now,
             Isim = vm.Isim,
             SoyIsim = vm.SoyIsim,
@@ -408,9 +435,23 @@ public class MagazaManager
         await _db.Siparis.AddAsync(siparis);
         await _db.SaveChangesAsync();
 
+        stripeOptions.SuccessUrl =
+            $"{domain}/Magaza/SiparisOnayla?siparisId={siparis.Id}";
+
+        var stripeService = new SessionService();
+        var stripeSession = stripeService.Create(stripeOptions);
+
+        siparis.SessionId = stripeSession.Id;
+        siparis.OdemeIntentId = stripeSession.PaymentIntentId;
+        await _db.SaveChangesAsync();
+
         return new()
         {
-            Object = siparis
+            Object = new()
+            {
+                SiparisId = siparis.Id,
+                OdemeUrl = stripeSession.Url
+            }
         };
     }
 
@@ -419,5 +460,64 @@ public class MagazaManager
         var sepet = session.Get<SepetSessionObject>("sepet");
 
         return sepet != null && sepet.Items.Count > 0;
+    }
+
+    public async Task<Result> SiparisiOnaylaAsync(ISession session,
+                                                  string? kullaniciAdi,
+                                                  int siparisId)
+    {
+        if (string.IsNullOrWhiteSpace(kullaniciAdi))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz kullanıcı" }
+            };
+
+        var kullanici = await _kullaniciManager.Set
+            .Include(k => k.Siparisler)
+            .FirstOrDefaultAsync(k => k.UserName == kullaniciAdi);
+
+        if (kullanici == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz kullanıcı" }
+            };
+
+        var siparis = kullanici.Siparisler.FirstOrDefault(s => s.Id == siparisId);
+
+        if (siparis == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz sipariş" }
+            };
+
+        var stripeService = new SessionService();
+        var stripeSession = stripeService.Get(siparis.SessionId);
+
+        if (stripeSession.PaymentStatus.ToLower() != "paid")
+            return new()
+            {
+                Success = false,
+                Fatal = false,
+                Errors = { "Ödeme yapılamadı" }
+            };
+
+        siparis.OdemeDurumu = OdemeDurumu.ODENDI;
+        siparis.OdemeTarihi = DateTime.Now;
+
+        await _db.SaveChangesAsync();
+        SepetiTemizle(session);
+
+        return new();
+    }
+
+    public void SepetiTemizle(ISession session)
+    {
+        session.Set("sepet", new SepetSessionObject());
     }
 }

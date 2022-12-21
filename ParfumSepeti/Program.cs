@@ -1,8 +1,9 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ParfumSepeti.Data;
 using ParfumSepeti.Models;
 using ParfumSepeti.Services;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,13 +59,12 @@ builder.Services.AddScoped<MagazaManager>();
 builder.Services.AddScoped<AdminManager>();
 
 
-// api
-//builder.Services.AddCors(options =>
-//    options.AddPolicy("AllowAll", config => config.AllowAnyHeader()
-//                                                  .AllowAnyOrigin()
-//                                                  .AllowAnyMethod())
-//);
-//builder.Services.AddEndpointsApiExplorer();
+// stripe
+string stripePublishableKey = builder.Configuration["stripe publishable key"]
+    ?? throw new Exception("'stripe publishable key' bulunamadı");
+
+string stripeSecreteKey = builder.Configuration["stripe secret key"]
+    ?? throw new Exception("'stripe secret key' bulunamadı");
 
 
 var app = builder.Build();
@@ -79,6 +79,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+
+// stripe
+StripeConfiguration.ApiKey = stripeSecreteKey;
 
 
 // seed

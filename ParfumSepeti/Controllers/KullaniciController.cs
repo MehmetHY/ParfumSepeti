@@ -174,6 +174,31 @@ public class KullaniciController : Controller
         return BadRequest(result.ToString());
     }
 
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> Siparisler()
+    {
+        var result = await _kullaniciManager.GetSiparislerVM(User.Identity?.Name);
+
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest(result.ToString());
+    }
+
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> SiparisDetaylari(int id)
+    {
+        var result = await _kullaniciManager.GetSiparisDetayVMAsync(User.Identity?.Name,
+                                                                    id);
+
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest(result.ToString());
+    }
+
     #region API
     [AcceptVerbs("GET", "POST")]
     public async Task<JsonResult> UserNameAvailable(string kullaniciAdi)

@@ -43,7 +43,7 @@ public class KullaniciManager : Manager<Kullanici>
                 Isim = u.UserName ?? "-",
 
                 OdenmisSiparis = u.Siparisler
-                    .Where(s => s.OdemeDurumu == OdeneDurumu.ODENDI)
+                    .Where(s => s.OdemeDurumu == OdemeDurumu.ODENDI)
                     .Count()
             })
             .ToListAsync();
@@ -87,7 +87,7 @@ public class KullaniciManager : Manager<Kullanici>
                 Isim = kullanici.UserName ?? "-",
 
                 OdenenSiparis = kullanici.Siparisler
-                    .Where(s => s.OdemeDurumu == OdeneDurumu.ODENDI)
+                    .Where(s => s.OdemeDurumu == OdemeDurumu.ODENDI)
                     .Count()
             }
         };
@@ -297,5 +297,139 @@ public class KullaniciManager : Manager<Kullanici>
 
         kullanici.IstekListesi.Remove(urun);
         await _db.SaveChangesAsync();
+    }
+
+    public async Task<Result<KullaniciSiparisleriVM>> GetSiparislerVM(string? kullaniciAdi)
+    {
+        if (string.IsNullOrWhiteSpace(kullaniciAdi))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçeriz kullanıcı" }
+            };
+
+        var kullanici = await _set
+            .AsNoTracking()
+            .Include(k => k.Siparisler)
+            .ThenInclude(s => s.Ogeler)
+            .FirstOrDefaultAsync(k => k.UserName == kullaniciAdi);
+
+        if (kullanici == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçeriz kullanıcı" }
+            };
+
+        var vm = new KullaniciSiparisleriVM();
+
+        foreach (var siparis in kullanici.Siparisler)
+        {
+            var ogeler = siparis.Ogeler
+                .Select(o => new KullaniciSiparisleriVM.SiparisItem.Oge
+                {
+                    Adet = o.Adet,
+                    Fiyat = o.Fiyat,
+                    UrunIsmi = o.UrunIsmi
+                })
+                .ToList();
+
+            var item = new KullaniciSiparisleriVM.SiparisItem
+            {
+                Id = siparis.Id,
+                Ogeler = ogeler,
+                Toplam = ogeler.Reduce<KullaniciSiparisleriVM.SiparisItem.Oge, decimal>(
+                    (oge, toplam) => toplam + oge.Fiyat * oge.Adet
+                ),
+                KargoDurumu = siparis.KargoDurumu,
+                OdemeDurumu = siparis.OdemeDurumu,
+                OlusuturmaTarihi = siparis.OlusturmaTarihi
+            };
+
+            vm.Items.Add(item);
+        }
+
+        return new()
+        {
+            Object = vm
+        };
+    }
+
+    public async Task<Result<SiparisDetayVM>> GetSiparisDetayVMAsync(string? kullaniciAdi,
+                                                                     int siparisId)
+    {
+        if (string.IsNullOrWhiteSpace(kullaniciAdi))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Kullanıcı" }
+            };
+
+        var kullanici = await _set
+            .Include(k => k.Siparisler)
+            .ThenInclude(s => s.Ogeler)
+            .FirstOrDefaultAsync(k => k.UserName == kullaniciAdi);
+
+        if (kullanici == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Kullanıcı" }
+            };
+
+        var siparis = kullanici.Siparisler.FirstOrDefault(s => s.Id == siparisId);
+
+        if (siparis == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Sipariş" }
+            };
+
+        var ogeler = siparis.Ogeler
+            .Select(o => new SiparisDetayVM.Oge
+            {
+                Adet = o.Adet,
+                Fiyat = o.Fiyat,
+                Urun = o.UrunIsmi
+            })
+            .ToList();
+
+        var toplam = ogeler.Reduce<SiparisDetayVM.Oge, decimal>(
+            (o, t) => t + o.Fiyat * o.Adet
+        );
+
+        var detay = new SiparisDetayVM
+        {
+            Ogeler = ogeler,
+            Toplam = toplam.ToString("F2"),
+            
+            OlusturmaTarihi = siparis.OlusturmaTarihi.ToString(),
+            OdemeDurumu = siparis.OdemeDurumu,
+            OdemeTarihi = siparis.OdemeTarihi?.ToString() ?? "-",
+
+            KargoDurumu = siparis.KargoDurumu,
+            KargoyaVerilmeTarihi = siparis.KargoyaVerilmeTarihi?.ToString() ?? "-",
+            KargoFirmasii = siparis.KargoSirketi ?? "-",
+            KargoTakipKodu = siparis.KargoTakipKodu ?? "-",
+
+            Isim = siparis.Isim ?? "-",
+            SoyIsim = siparis.SoyIsim ?? "-",
+            Telefon = siparis.Telefon ?? "-",
+            Il = siparis.Il ?? "-",
+            Ilce = siparis.Ilce ?? "-",
+            Adres = siparis.Adres ?? "-",
+            PostaKodu = siparis.PostaKodu ?? "-"
+        };
+
+        return new()
+        {
+            Object = detay
+        };
     }
 }

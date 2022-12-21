@@ -2,6 +2,6 @@
 
 public static class KargoDurumu
 {
-    public const string BEKLEMEDE = "Beklemede";
-    public const string GONDERILDE = "Gönderildi";
+    public const string GONDERILMEDI = "Gönderilmedi";
+    public const string GONDERILDI = "Gönderildi";
 }

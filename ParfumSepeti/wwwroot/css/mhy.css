@@ -169,12 +169,12 @@
 /* --------------------------------------------------------- */
 /* BUTTON */
 /* --------------------------------------------------------- */
-.nav-link, .btn-primary, .btn-success, .btn-danger, .btn2, .btn2-danger {
+.nav-link, .btn-primary, .btn-success, .btn-danger, .btn2, .btn2-primary, .btn2-success, .btn2-danger {
     cursor: pointer;
     text-decoration: none;
 }
 
-a.btn-primary, a.btn-success, a.btn-danger, a.btn2, a.btn2-danger {
+a.btn-primary, a.btn-success, a.btn-danger, a.btn2, a.btn2-primary, a.btn2-success, a.btn2-danger {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -251,6 +251,24 @@ a.btn-primary, a.btn-success, a.btn-danger, a.btn2, a.btn2-danger {
             background-color: var(--normal);
         }
 
+.btn2-primary {
+    background-color: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+}
+.btn2-primary:hover {
+    background-color: var(--primary);
+    color: var(--primary-contrast);
+}
+.btn2-success {
+    background-color: transparent;
+    border: 2px solid var(--success);
+    color: var(--success);
+}
+    .btn2-success:hover {
+        background-color: var(--success);
+        color: var(--success-contrast);
+    }
 .btn2-danger {
     background-color: transparent;
     border: 2px solid var(--danger);
