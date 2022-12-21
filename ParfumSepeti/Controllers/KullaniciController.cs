@@ -230,6 +230,32 @@ public class KullaniciController : Controller
         return BadRequest(result?.ToString());
     }
 
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> SiparisIptal(int id)
+    {
+        var result = await _kullaniciManager.GetSiparisIptalVMAsync(User.Identity?.Name,
+                                                                    id);
+
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest(result.ToString());
+    }
+
+    [Authorize]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SiparisIptal(SiparisIptalVM vm)
+    {
+        var result = await _kullaniciManager.SiparisIptalEtAsync(User.Identity?.Name, vm);
+
+        if (result.Success)
+            return RedirectToAction(nameof(Siparisler));
+
+        return BadRequest(result.ToString());
+    }
+
     #region API
     [AcceptVerbs("GET", "POST")]
     public async Task<JsonResult> UserNameAvailable(string kullaniciAdi)

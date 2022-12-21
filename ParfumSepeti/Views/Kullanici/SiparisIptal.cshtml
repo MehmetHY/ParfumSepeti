@@ -1,0 +1,40 @@
+﻿@model SiparisIptalVM
+
+<form class="form" method="post">
+    <h2>Sipariş İptal</h2>
+
+    <div class="panel p12 hbox ai-c jc-sb">
+        <span class="text-l">Oluşturma Tarihi</span>
+        <span class="">@Model.OlusturmaTarihi</span>
+    </div>
+
+    <div class="panel vbox p16 gap24">
+
+        @foreach (var oge in Model.Ogeler)
+        {
+            <div class="hbox jc-sb gap24 ai-c">
+                <span class="text-l bold">@oge.Urun</span>
+                <div class="hbox gap12 ai-c">
+                    <span>@oge.Fiyat.ToString("F2") TL</span>
+                    <span class="fa fa-multiply"></span>
+                    <span>@oge.Adet</span>
+                </div>
+            </div>
+        }
+
+    </div>
+
+    <div class="panel hbox border2 ai-c jc-sb p12">
+        <span class="text-l">Toplam</span>
+        <span class="text-xxl bold">@Model.Toplam TL</span>
+    </div>
+
+    <div class="hbox-r500 jc-end gap4">
+        <a asp-action="Siparisler" class="btn2 ph12">Geri Dön</a>
+        <button class="btn-danger text-l bold ph48 pv4 order-r500-first"
+                type="submit">
+            Siparişi İptal Et
+        </button>
+    </div>
+
+</form>

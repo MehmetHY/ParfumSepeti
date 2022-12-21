@@ -407,7 +407,7 @@ public class KullaniciManager : Manager<Kullanici>
             SiparisId = siparis.Id,
             Ogeler = ogeler,
             Toplam = toplam.ToString("F2"),
-            
+
             OlusturmaTarihi = siparis.OlusturmaTarihi.ToString(),
             OdemeDurumu = siparis.OdemeDurumu,
             OdemeTarihi = siparis.OdemeTarihi?.ToString() ?? "-",
@@ -524,6 +524,103 @@ public class KullaniciManager : Manager<Kullanici>
         siparis.Adres = vm.Adres;
         siparis.PostaKodu = vm.PostaKodu;
 
+        await _db.SaveChangesAsync();
+
+        return new();
+    }
+
+    public async Task<Result<SiparisIptalVM>> GetSiparisIptalVMAsync(string? kullaniciAdi,
+                                                                     int siparisId)
+    {
+        if (string.IsNullOrWhiteSpace(kullaniciAdi))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Kullanıcı" }
+            };
+
+        var kullanici = await _set
+            .Include(k => k.Siparisler)
+            .ThenInclude(s => s.Ogeler)
+            .FirstOrDefaultAsync(k => k.UserName == kullaniciAdi);
+
+        if (kullanici == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Kullanıcı" }
+            };
+
+        var siparis = kullanici.Siparisler.FirstOrDefault(s => s.Id == siparisId);
+
+        if (siparis == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Sipariş" }
+            };
+
+        var ogeler = siparis.Ogeler
+            .Select(o => new SiparisIptalVM.Oge
+            {
+                Urun = o.UrunIsmi,
+                Fiyat = o.Fiyat,
+                Adet = o.Adet
+            })
+            .ToList();
+
+        var toplam = ogeler.Reduce<SiparisIptalVM.Oge, decimal>(
+            (o, t) => t + o.Fiyat * o.Adet
+        );
+
+        return new()
+        {
+            Object = new()
+            {
+                Id = siparis.Id,
+                Ogeler = ogeler,
+                Toplam = toplam.ToString("F2"),
+                OlusturmaTarihi = siparis.OlusturmaTarihi.ToString()
+            }
+        };
+    }
+
+    public async Task<Result> SiparisIptalEtAsync(string? kullaniciAdi, SiparisIptalVM vm)
+    {
+        if (string.IsNullOrWhiteSpace(kullaniciAdi))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Kullanıcı" }
+            };
+
+        var kullanici = await _set
+            .Include(k => k.Siparisler)
+            .FirstOrDefaultAsync(k => k.UserName == kullaniciAdi);
+
+        if (kullanici == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Kullanıcı" }
+            };
+
+        var siparis = kullanici.Siparisler.FirstOrDefault(s => s.Id == vm.Id);
+
+        if (siparis == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Sipariş" }
+            };
+
+        kullanici.Siparisler.Remove(siparis);
         await _db.SaveChangesAsync();
 
         return new();
