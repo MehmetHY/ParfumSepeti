@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics.Internal;
 using ParfumSepeti.Const;
 using ParfumSepeti.Data;
 using ParfumSepeti.Models;
 using ParfumSepeti.ViewModels;
-using System.Runtime.CompilerServices;
 
 namespace ParfumSepeti.Services;
 
@@ -406,6 +404,7 @@ public class KullaniciManager : Manager<Kullanici>
 
         var detay = new SiparisDetayVM
         {
+            SiparisId = siparis.Id,
             Ogeler = ogeler,
             Toplam = toplam.ToString("F2"),
             
@@ -431,5 +430,102 @@ public class KullaniciManager : Manager<Kullanici>
         {
             Object = detay
         };
+    }
+
+    public async Task<Result<SiparisAdresDuzenleVM>> GetSiparisAdresDuzenleVMAsync(
+        string? kullaniciAdi,
+        int siparisId
+    )
+    {
+        if (string.IsNullOrWhiteSpace(kullaniciAdi))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Kullanıcı" }
+            };
+
+        var kullanici = await _set
+            .Include(k => k.Siparisler)
+            .FirstOrDefaultAsync(k => k.UserName == kullaniciAdi);
+
+        if (kullanici == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Kullanıcı" }
+            };
+
+        var siparis = kullanici.Siparisler.FirstOrDefault(s => s.Id == siparisId);
+
+        if (siparis == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Sipariş" }
+            };
+
+        return new()
+        {
+            Object = new()
+            {
+                Id = siparis.Id,
+                Isim = siparis.Isim ?? "-",
+                SoyIsim = siparis.SoyIsim ?? "-",
+                Telefon = siparis.Telefon ?? "-",
+                Il = siparis.Il ?? "-",
+                Ilce = siparis.Ilce ?? "-",
+                Adres = siparis.Adres ?? "-",
+                PostaKodu = siparis.PostaKodu ?? "-"
+            }
+        };
+    }
+
+    public async Task<Result> SiparisAdresGuncelleAsync(string? kullaniciAdi,
+                                                        SiparisAdresDuzenleVM vm)
+    {
+        if (string.IsNullOrWhiteSpace(kullaniciAdi))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Kullanıcı" }
+            };
+
+        var kullanici = await _set
+            .Include(k => k.Siparisler)
+            .FirstOrDefaultAsync(k => k.UserName == kullaniciAdi);
+
+        if (kullanici == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Kullanıcı" }
+            };
+
+        var siparis = kullanici.Siparisler.FirstOrDefault(s => s.Id == vm.Id);
+
+        if (siparis == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz Sipariş" }
+            };
+
+        siparis.Isim = vm.Isim;
+        siparis.SoyIsim = vm.SoyIsim;
+        siparis.Telefon = vm.Telefon;
+        siparis.Il = vm.Il;
+        siparis.Ilce = vm.Ilce;
+        siparis.Adres = vm.Adres;
+        siparis.PostaKodu = vm.PostaKodu;
+
+        await _db.SaveChangesAsync();
+
+        return new();
     }
 }

@@ -1,0 +1,54 @@
+﻿@model SiparisAdresDuzenleVM
+
+<form class="form" method="post">
+    <h2>Adres Bilgileri</h2>
+
+    <input asp-for="Id" hidden />
+
+    <div class="group">
+        <label asp-for="Isim"></label>
+        <input asp-for="Isim" />
+        <span asp-validation-for="Isim" class="hata"></span>
+    </div>
+    <div class="group">
+        <label asp-for="SoyIsim"></label>
+        <input asp-for="SoyIsim" />
+        <span asp-validation-for="SoyIsim" class="hata"></span>
+    </div>
+    <div class="group">
+        <label asp-for="Telefon"></label>
+        <input asp-for="Telefon" />
+        <span asp-validation-for="Telefon" class="hata"></span>
+    </div>
+    <div class="group">
+        <label asp-for="Il"></label>
+        <input asp-for="Il" />
+        <span asp-validation-for="Il" class="hata"></span>
+    </div>
+    <div class="group">
+        <label asp-for="Ilce"></label>
+        <input asp-for="Ilce" />
+        <span asp-validation-for="Ilce" class="hata"></span>
+    </div>
+    <div class="group">
+        <label asp-for="Adres"></label>
+        <input asp-for="Adres" />
+        <span asp-validation-for="Adres" class="hata"></span>
+    </div>
+    <div class="group">
+        <label asp-for="PostaKodu"></label>
+        <input asp-for="PostaKodu" />
+        <span asp-validation-for="PostaKodu" class="hata"></span>
+    </div>
+    <div class="hbox-r500 jc-end gap4">
+        <a asp-action="Siparisler" class="btn2 ph12">Geri</a>
+        <button class="btn-primary text-l ph48 pv4 order-r500-first"
+                type="submit">
+            Kaydet
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_Validation" />
+}
