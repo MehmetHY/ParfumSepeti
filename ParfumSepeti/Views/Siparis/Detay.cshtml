@@ -15,8 +15,8 @@
         <h1 class="m0 text-center text-nowrap">Sipariş Detayları</h1>
 
         <div class="w100p hbox jc-end gap8">
-            <a class="fa fa-pencil-alt text-xxl bold ph12 pv8 btn2-primary"></a>
-            <a class="fa fa-trash-alt text-xxl bold ph12 pv8 btn2-danger"></a>
+            <a asp-action="Duzenle" asp-route-id="@Model.SiparisId" class="fa fa-pencil-alt text-xxl bold ph12 pv8 btn2-primary"></a>
+            <a asp-action="Sil" asp-route-id="@Model.SiparisId" class="fa fa-trash-alt text-xxl bold ph12 pv8 btn2-danger"></a>
         </div>
 
     </div>

@@ -115,10 +115,72 @@ public class SiparisManager : Manager<Siparis>
                 SoyIsim = siparis.SoyIsim ?? "-",
                 Telefon = siparis.Telefon ?? "-",
                 Il = siparis.Il ?? "-",
-                Ilce = siparis.Ilce,
+                Ilce = siparis.Ilce ?? "-",
                 Adres = siparis.Adres ?? "-",
                 PostaKodu = siparis.PostaKodu ?? "-"
             }
         };
+    }
+
+    public async Task<Result<AdminSiparisSilVM>> GetSiparisSilVMAsync(int siparisId)
+    {
+        var siparis = await _set
+            .AsNoTracking()
+            .Include(s => s.Ogeler)
+            .Include(s => s.Kullanici)
+            .FirstOrDefaultAsync(s => s.Id == siparisId);
+
+        if (siparis == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz siparis" }
+            };
+
+        var ogeler = siparis.Ogeler
+            .Select(o => new AdminSiparisSilVM.Oge
+            {
+                Urun = o.UrunIsmi,
+                Fiyat = o.Fiyat,
+                Adet = o.Adet
+            })
+            .ToList();
+
+        var toplam = siparis.Ogeler.Reduce<SiparisOgesi, decimal>(
+            (o, t) => t + o.Fiyat * o.Adet
+        );
+
+        return new()
+        {
+            Object = new()
+            {
+                Id = siparis.Id,
+                Kullanici = siparis.Kullanici?.UserName ?? "-",
+                OlusturmaTarihi = siparis.OlusturmaTarihi.ToString(),
+                Ogeler = ogeler,
+                Toplam = toplam.ToString("F2"),
+                OdemeDurumu = siparis.OdemeDurumu,
+                KargoDurumu = siparis.KargoDurumu
+            }
+        };
+    }
+
+    public async Task<Result> SiparisSilAsync(int siparisId)
+    {
+        var siparis = await _set.FirstOrDefaultAsync(s => s.Id == siparisId);
+
+        if (siparis == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz siparis" }
+            };
+
+        _set.Remove(siparis);
+        await _db.SaveChangesAsync();
+
+        return new();
     }
 }
