@@ -1,0 +1,33 @@
+﻿@model AdminSiparisDuzenleVM
+
+<form class="form" method="post">
+    <h2>Kargo Düzenle</h2>
+
+    <input asp-for="Id" hidden />
+
+    <div asp-validation-summary="ModelOnly" class="hata"></div>
+
+    <div class="group">
+        <label asp-for="KargoDurumu"></label>
+        <select asp-for="KargoDurumu" asp-items="@Model.KargoDurumlari"></select>
+        <span asp-validation-for="KargoDurumu"></span>
+    </div>
+
+    <div class="group">
+        <label asp-for="TasiyiciFirma"></label>
+        <input asp-for="TasiyiciFirma" />
+    </div>
+
+    <div class="group">
+        <label asp-for="KargoTakipNo"></label>
+        <input asp-for="KargoTakipNo" />
+    </div>
+
+    <div class="hbox-r500 jc-end gap4">
+        <a asp-action="Detay" asp-route-id="@Model.Id" class="btn2 ph12">Geri</a>
+        <button class="btn-primary text-l ph48 pv4 order-r500-first"
+                type="submit">
+            Kaydet
+        </button>
+    </div>
+</form>

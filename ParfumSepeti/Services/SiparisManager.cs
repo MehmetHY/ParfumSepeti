@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using ParfumSepeti.Const;
 using ParfumSepeti.Data;
 using ParfumSepeti.Models;
@@ -12,7 +13,7 @@ public class SiparisManager : Manager<Siparis>
     {
     }
 
-    public async Task<AdminSiparisListeleVM> GetSiparisListeleVMAsync()
+    public async Task<AdminSiparisListeleVM> GetListeleVMAsync()
     {
         var siparislerDb = await _set
             .AsNoTracking()
@@ -67,7 +68,7 @@ public class SiparisManager : Manager<Siparis>
         };
     }
 
-    public async Task<Result<AdminSiparisDetayVM>> GetSiparisDetayVMAsync(int siparisId)
+    public async Task<Result<AdminSiparisDetayVM>> GetDetayVMAsync(int siparisId)
     {
         var siparis = await _set
             .AsNoTracking()
@@ -122,7 +123,7 @@ public class SiparisManager : Manager<Siparis>
         };
     }
 
-    public async Task<Result<AdminSiparisSilVM>> GetSiparisSilVMAsync(int siparisId)
+    public async Task<Result<AdminSiparisSilVM>> GetSilVMAsync(int siparisId)
     {
         var siparis = await _set
             .AsNoTracking()
@@ -166,7 +167,7 @@ public class SiparisManager : Manager<Siparis>
         };
     }
 
-    public async Task<Result> SiparisSilAsync(int siparisId)
+    public async Task<Result> SilAsync(int siparisId)
     {
         var siparis = await _set.FirstOrDefaultAsync(s => s.Id == siparisId);
 
@@ -179,6 +180,103 @@ public class SiparisManager : Manager<Siparis>
             };
 
         _set.Remove(siparis);
+        await _db.SaveChangesAsync();
+
+        return new();
+    }
+
+    public List<SelectListItem> GetKargoDurumlari()
+    {
+        return new()
+        {
+            new(KargoDurumu.GONDERILDI, KargoDurumu.GONDERILDI),
+            new(KargoDurumu.GONDERILMEDI, KargoDurumu.GONDERILMEDI)
+        };
+    }
+
+    public async Task<Result<AdminSiparisDuzenleVM>> GetDuzenleVMAsync(int siparisId)
+    {
+        var siparis = await _set
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Id == siparisId);
+
+        if (siparis == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz siparis" }
+            };
+
+        return new()
+        {
+            Object = new()
+            {
+                Id = siparis.Id,
+                KargoDurumu = siparis.KargoDurumu,
+                KargoDurumlari = GetKargoDurumlari(),
+                KargoTakipNo = siparis.KargoTakipKodu,
+                TasiyiciFirma = siparis.KargoSirketi
+            }
+        };
+    }
+
+    public async Task<Result> DuzenleAsync(AdminSiparisDuzenleVM vm)
+    {
+        var siparis = await _set.FirstOrDefaultAsync(s => s.Id == vm.Id);
+
+        if (siparis == null)
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz siparis" }
+            };
+
+        if (vm.KargoDurumu == KargoDurumu.GONDERILMEDI)
+        {
+            siparis.KargoSirketi = null;
+            siparis.KargoTakipKodu = null;
+            siparis.KargoyaVerilmeTarihi = null;
+        }
+        else if (vm.KargoDurumu == KargoDurumu.GONDERILDI)
+        {
+            if (string.IsNullOrWhiteSpace(vm.TasiyiciFirma))
+                return new()
+                {
+                    Success = false,
+
+                    Errors =
+                    {
+                        "Eğer kargo gönderildiyse, taşıyıcı firma boş bırakılamaz."
+                    }
+                };
+
+            if (string.IsNullOrWhiteSpace(vm.KargoTakipNo))
+                return new()
+                {
+                    Success = false,
+
+                    Errors =
+                    {
+                        "Eğer kargo gönderildiyse, kargo takip numarası boş bırakılamaz."
+                    }
+                };
+
+            siparis.KargoSirketi = vm.TasiyiciFirma;
+            siparis.KargoTakipKodu = vm.KargoTakipNo;
+            siparis.KargoyaVerilmeTarihi = DateTime.Now;
+        }
+        else
+        {
+            return new()
+            {
+                Success = false,
+                Errors = { "Kargo durumu boş bırakılamaz." }
+            };
+        }
+
+        siparis.KargoDurumu = vm.KargoDurumu;
         await _db.SaveChangesAsync();
 
         return new();
