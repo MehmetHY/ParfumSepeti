@@ -39,7 +39,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Kullanici/Giris";
     options.LogoutPath = "/Kullanici/Cikis";
-    options.AccessDeniedPath = "/Kullanici/ErisimEngellendi";
+    options.AccessDeniedPath = "/Hata/ErisimEngellendi";
 });
 
 builder.Services.AddDistributedMemoryCache();

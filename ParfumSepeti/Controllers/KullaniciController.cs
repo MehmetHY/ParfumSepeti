@@ -96,7 +96,7 @@ public class KullaniciController : Controller
         if (result.Success)
             return View(result.Object);
 
-        return BadRequest(result.ToString());
+         return BadRequest(result.ToString());
     }
 
     [Authorize(Roles = "admin")]
