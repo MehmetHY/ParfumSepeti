@@ -439,7 +439,7 @@ public class MagazaManager
             $"{domain}/Magaza/SiparisOnayla?siparisId={siparis.Id}";
 
         var stripeService = new SessionService();
-        var stripeSession = stripeService.Create(stripeOptions);
+        var stripeSession = await stripeService.CreateAsync(stripeOptions);
 
         siparis.SessionId = stripeSession.Id;
         siparis.OdemeIntentId = stripeSession.PaymentIntentId;
@@ -497,7 +497,7 @@ public class MagazaManager
             };
 
         var stripeService = new SessionService();
-        var stripeSession = stripeService.Get(siparis.SessionId);
+        var stripeSession = await stripeService.GetAsync(siparis.SessionId);
 
         if (stripeSession.PaymentStatus.ToLower() != "paid")
             return new()

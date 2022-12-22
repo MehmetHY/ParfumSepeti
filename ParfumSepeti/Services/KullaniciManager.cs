@@ -669,7 +669,7 @@ public class KullaniciManager : Manager<Kullanici>
             };
 
         var stripeService = new SessionService();
-        var stripeSession = stripeService.Get(siparis.SessionId);
+        var stripeSession = await stripeService.GetAsync(siparis.SessionId);
 
         if (stripeSession == null)
             return new()

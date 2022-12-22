@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using ParfumSepeti.Const;
+using ParfumSepeti.Data;
 using ParfumSepeti.Models;
 using ParfumSepeti.ViewModels;
 
@@ -10,16 +13,19 @@ public class AdminManager
     private readonly UrunManager _urunManager;
     private readonly KategoriManager _kategoriManager;
     private readonly KullaniciManager _kullaniciManager;
+    private readonly AppDbContext _db;
 
     public AdminManager(UserManager<Kullanici> userManager,
                         UrunManager urunManager,
                         KategoriManager kategoriManager,
-                        KullaniciManager kullaniciManager)
+                        KullaniciManager kullaniciManager,
+                        AppDbContext db)
     {
-        _userManager= userManager;
+        _userManager = userManager;
         _urunManager = urunManager;
         _kategoriManager = kategoriManager;
         _kullaniciManager = kullaniciManager;
+        _db = db;
     }
 
     public async Task<AdminPanelVM> GetPanelVM()
@@ -28,13 +34,21 @@ public class AdminManager
         var urunSayisi = await _urunManager.CountAsync();
         var adminSayisi = (await _userManager.GetUsersInRoleAsync("admin")).Count;
         var kullaniciSayisi = (await _kullaniciManager.CountAsync()) - adminSayisi;
+        var siparisSayisi = await _db.Siparis.CountAsync();
+
+        var onemliSiparisSayisi = await _db.Siparis.CountAsync(s =>
+            s.OdemeDurumu == OdemeDurumu.ODENDI &&
+            s.KargoDurumu == KargoDurumu.GONDERILMEDI
+        );
 
         return new()
         {
             KategoriSayisi = kategoriSayisi,
             UrunSayisi = urunSayisi,
             AdminSayisi = adminSayisi,
-            KullaniciSayisi = kullaniciSayisi
+            KullaniciSayisi = kullaniciSayisi,
+            SiparisSayisi = siparisSayisi,
+            OnemliSiparisSayisi = onemliSiparisSayisi
         };
     }
 }

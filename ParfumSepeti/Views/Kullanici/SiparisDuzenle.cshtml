@@ -41,7 +41,7 @@
         <span asp-validation-for="PostaKodu" class="hata"></span>
     </div>
     <div class="hbox-r500 jc-end gap4">
-        <a asp-action="Siparisler" class="btn2 ph12">Geri</a>
+        <a asp-action="SiparisDetaylari" asp-route-id="@Model.Id" class="btn2 ph12">Geri</a>
         <button class="btn-primary text-l ph48 pv4 order-r500-first"
                 type="submit">
             Kaydet

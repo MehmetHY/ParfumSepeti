@@ -1,0 +1,148 @@
+﻿@model AdminSiparisDetayVM
+
+@{
+    var odendi = Model.OdemeDurumu == OdemeDurumu.ODENDI;
+    var gonderildi = Model.KargoDurumu == KargoDurumu.GONDERILDI;
+}
+
+<div class="panel as-s p64-r vbox gap36">
+
+    <div class="hbox-r500 jc-sb gap12">
+        <div class="w100p hbox">
+            <a asp-action="Listele" class="fa fa-arrow-left text-xxl bold ph12 pv8 btn2"></a>
+        </div>
+
+        <h1 class="m0 text-center text-nowrap">Sipariş Detayları</h1>
+
+        <div class="w100p hbox jc-end gap8">
+            <a class="fa fa-pencil-alt text-xxl bold ph12 pv8 btn2-primary"></a>
+            <a class="fa fa-trash-alt text-xxl bold ph12 pv8 btn2-danger"></a>
+        </div>
+
+    </div>
+    <div class="hbox-r800 gap36">
+
+        <div class="vbox gap48 w100p">
+
+            <div class="vbox gap12">
+                <h2>Ürünler</h2>
+                <div class="panel vbox p16 gap24">
+
+                    @foreach (var oge in Model.Ogeler)
+                    {
+                        <div class="hbox jc-sb gap24 ai-c">
+                            <span class="text-l bold">@oge.Urun</span>
+                            <div class="hbox gap12 ai-c">
+                                <span>@oge.Fiyat.ToString("F2") TL</span>
+                                <span class="fa fa-multiply"></span>
+                                <span>@oge.Adet</span>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+                <div class="panel hbox border2 ai-c jc-sb p12">
+                    <span class="text-l">Toplam</span>
+                    <span class="text-xxl bold">@Model.Toplam TL</span>
+                </div>
+            </div>
+
+            <div class="vbox gap12">
+                <h2>Sipariş Bilgileri</h2>
+
+                <div class="panel p12 hbox ai-c jc-sb">
+                    <span class="text-l">Oluşturma Tarihi</span>
+                    <span class="">@Model.OlusturmaTarihi</span>
+                </div>
+
+                <div class="panel p12 hbox ai-c jc-sb">
+                    <span class="text-l">Ödeme Durumu</span>
+                    <span class="@(odendi ? "border2-success color-success" : "border2-danger color-danger") p8">
+                        @Model.OdemeDurumu
+                    </span>
+                </div>
+
+                <div class="panel p12 hbox ai-c jc-sb">
+                    <span class="text-l">Ödeme Tarihi</span>
+                    <span class="">@Model.OdemeTarihi</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="vbox gap48 w100p">
+
+            <div class="vbox gap12">
+                <h2>Kargo Bilgileri</h2>
+
+                <div class="panel p12 hbox ai-c jc-sb">
+                    <span class="text-l">Kargo Durumu</span>
+                    <span class="@(gonderildi ? "border2-success color-success" : "border2-danger color-danger") p8">
+                        @Model.KargoDurumu
+                    </span>
+                </div>
+
+                <div class="panel p12 hbox ai-c jc-sb">
+                    <span class="text-l">Kargoya Verilme Tarihi</span>
+                    <span class="">@Model.KargoyaVerilmeTarihi</span>
+                </div>
+
+                <div class="panel p12 hbox ai-c jc-sb">
+                    <span class="text-l">Kargo Firması</span>
+                    <span class="">@Model.KargoFirmasi</span>
+                </div>
+
+                <div class="panel p12 hbox ai-c jc-sb">
+                    <span class="text-l">Kargo Takip Numarası</span>
+                    <span class="">@Model.KargoTakipKodu</span>
+                </div>
+            </div>
+
+            <div class="vbox gap12">
+                <h2>Kişi Bilgileri</h2>
+
+                <div class="panel p12 hbox ai-c jc-sb">
+                    <span class="text-l">Kullanıcı</span>
+                    <span class="">@Model.Kullanici</span>
+                </div>
+
+                <div class="panel p12 hbox ai-c jc-sb">
+                    <span class="text-l">İsim</span>
+                    <span class="">@Model.Isim</span>
+                </div>
+
+                <div class="panel p12 hbox ai-c jc-sb">
+                    <span class="text-l">Soyisim</span>
+                    <span class="">@Model.SoyIsim</span>
+                </div>
+
+                <div class="panel p12 hbox ai-c jc-sb">
+                    <span class="text-l">Telefon</span>
+                    <span class="">@Model.SoyIsim</span>
+                </div>
+
+                <div class="panel p12 hbox ai-c jc-sb">
+                    <span class="text-l">İl</span>
+                    <span class="">@Model.Il</span>
+                </div>
+
+                <div class="panel p12 hbox ai-c jc-sb">
+                    <span class="text-l">İlçe</span>
+                    <span class="">@Model.Ilce</span>
+                </div>
+
+                <div class="panel p12 hbox ai-c jc-sb">
+                    <span class="text-l">Adres</span>
+                    <span class="">@Model.Adres</span>
+                </div>
+
+                <div class="panel p12 hbox ai-c jc-sb">
+                    <span class="text-l">Posta Kodu</span>
+                    <span class="">@Model.PostaKodu</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

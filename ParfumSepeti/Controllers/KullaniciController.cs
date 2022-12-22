@@ -225,7 +225,7 @@ public class KullaniciController : Controller
         );
 
         if (result.Success)
-            return RedirectToAction(nameof(Siparisler));
+            return RedirectToAction(nameof(SiparisDetaylari), new { id = vm.Id });
 
         return BadRequest(result?.ToString());
     }

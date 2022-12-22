@@ -1,4 +1,4 @@
-﻿namespace ParfumSepeti.Services;
+﻿namespace ParfumSepeti.ViewModels;
 
 #pragma warning disable CS8618
 
