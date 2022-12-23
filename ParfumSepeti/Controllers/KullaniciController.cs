@@ -176,9 +176,11 @@ public class KullaniciController : Controller
 
     [Authorize]
     [HttpGet]
-    public async Task<IActionResult> Siparisler()
+    public async Task<IActionResult> Siparisler(int page = 1, int pageSize = 20)
     {
-        var result = await _kullaniciManager.GetSiparislerVM(User.Identity?.Name);
+        var result = await _kullaniciManager.GetSiparislerVM(User.Identity?.Name,
+                                                             page,
+                                                             pageSize);
 
         if (result.Success)
             return View(result.Object);

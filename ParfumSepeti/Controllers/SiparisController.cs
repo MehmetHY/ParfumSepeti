@@ -16,11 +16,14 @@ public class SiparisController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Listele()
+    public async Task<IActionResult> Listele(int page = 1, int pageSize = 20)
     {
-        var vm = await _siparisManager.GetListeleVMAsync();
+        var result = await _siparisManager.GetListeleVMAsync();
 
-        return View(vm);
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest(result.ToString());
     }
 
     [HttpGet]
@@ -53,7 +56,7 @@ public class SiparisController : Controller
 
         if (result.Success)
             return RedirectToAction(nameof(Listele));
-        
+
         return BadRequest(result.ToString());
     }
 

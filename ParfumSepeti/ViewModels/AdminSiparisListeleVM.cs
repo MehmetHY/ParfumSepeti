@@ -2,7 +2,7 @@
 
 #pragma warning disable CS8618
 
-public class AdminSiparisListeleVM
+public class AdminSiparisListeleVM : PagedVM<AdminSiparisListeleVM.Siparis>
 {
     public class Siparis
     {
@@ -29,6 +29,4 @@ public class AdminSiparisListeleVM
 
         public string KargoDurumu { get; set; }
     }
-
-    public List<Siparis> Siparisler { get; set; } = new();
 }

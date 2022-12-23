@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ParfumSepeti.Services;
 using ParfumSepeti.ViewModels;
@@ -18,9 +17,12 @@ public class KategoriController : Controller
 
     public async Task<IActionResult> Listele(int page = 1, int pageSize = 20)
     {
-        var vm = await _kategoriManager.GetListeleVMAsync(page, pageSize);
+        var result = await _kategoriManager.GetListeleVMAsync(page, pageSize);
 
-        return View(vm);
+        if (result.Success)
+            return View(result.Object);
+
+        return BadRequest(result.ToString());
     }
 
     [HttpGet]

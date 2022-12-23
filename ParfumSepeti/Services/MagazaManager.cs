@@ -108,74 +108,109 @@ public class MagazaManager
                 Errors = { "Geçersiz kategori" }
             };
 
-        var result = await _urunManager.GetKategoriUrunCardsAsync(id, page, pageSize);
+        var query = _db.Urun
+            .AsNoTracking()
+            .Where(u => u.KategoriId == kategori.Id);
 
-        if (result.Success)
+        if (!await query.ValidPageAsync(page, pageSize))
             return new()
             {
-                Object = new()
-                {
-                    Id = id,
-                    Isim = kategori.Isim,
-                    Items = result.Object!,
-                    CurrentPage = page,
-                    PageSize = pageSize
-                }
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz sayfa" }
             };
+
+        var lastPage = await query.PageCountAsync(pageSize);
+
+        var cards = await query
+            .OrderByDescending(u => u.EklenmeTarihi)
+            .Page(page, pageSize)
+            .Include(u => u.Kategori)
+            .AsUrunCardVMs()
+            .ToListAsync();
 
         return new()
         {
-            Success = false,
-            Fatal = true,
-            Errors = result.Errors
+            Object = new()
+            {
+                Id = id,
+                Isim = kategori.Isim,
+                Items = cards,
+                CurrentPage = page,
+                PageSize = pageSize,
+                LastPage = lastPage
+            }
         };
     }
 
     public async Task<Result<IndirimVM>> GetIndirimVMAsync(int page = 1,
                                                            int pageSize = 20)
     {
-        var result = await _urunManager.GetIndirimliUrunCardsAsync(page, pageSize);
+        var query = _db.Urun
+            .AsNoTracking()
+            .Where(u => u.IndirimYuzdesi > 0);
 
-        if (result.Success)
+        if (!await query.ValidPageAsync(page, pageSize))
             return new()
             {
-                Object = new()
-                {
-                    Items = result.Object!,
-                    CurrentPage = page,
-                    PageSize = pageSize
-                }
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz sayfa" }
             };
+
+        var lastPage = await query.PageCountAsync(pageSize);
+
+        var cards = await query
+            .OrderByDescending(u => u.EklenmeTarihi)
+            .Page(page, pageSize)
+            .Include(u => u.Kategori)
+            .AsUrunCardVMs()
+            .ToListAsync();
 
         return new()
         {
-            Success = false,
-            Fatal = true,
-            Errors = result.Errors
+            Object = new()
+            {
+                Items = cards,
+                CurrentPage = page,
+                PageSize = pageSize,
+                LastPage = lastPage
+            }
         };
     }
 
     public async Task<Result<YeniVM>> GetYeniVMAsync(int page = 1,
                                                      int pageSize = 20)
     {
-        var result = await _urunManager.GetYeniUrunCardsAsync(page, pageSize);
+        var query = _db.Urun
+            .AsNoTracking()
+            .OrderByDescending(u => u.EklenmeTarihi);
 
-        if (result.Success)
+        if (!await query.ValidPageAsync(page, pageSize))
             return new()
             {
-                Object = new()
-                {
-                    Items = result.Object!,
-                    CurrentPage = page,
-                    PageSize = pageSize
-                }
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz sayfa" }
             };
+
+        var lastPage = await query.PageCountAsync(pageSize);
+
+        var cards = await query
+            .Page(page, pageSize)
+            .Include(u => u.Kategori)
+            .AsUrunCardVMs()
+            .ToListAsync();
 
         return new()
         {
-            Success = false,
-            Fatal = true,
-            Errors = result.Errors
+            Object = new()
+            {
+                Items = cards,
+                CurrentPage = page,
+                PageSize = pageSize,
+                LastPage = lastPage
+            }
         };
     }
 
@@ -189,24 +224,35 @@ public class MagazaManager
                 Object = new()
             };
 
-        var result = await _urunManager.GetAramaUrunCards(metin, page, pageSize);
+        var query = _db.Urun
+            .AsNoTracking()
+            .Where(u => u.Baslik.Contains(metin) || u.Aciklama.Contains(metin));
 
-        if (!result.Success)
+        if (!await query.ValidPageAsync(page, pageSize))
             return new()
             {
                 Success = false,
-                Fatal = result.Fatal,
-                Errors = result.Errors
+                Fatal = true,
+                Errors = { "Geçersiz sayfa" }
             };
+
+        var lastPage = await query.PageCountAsync(pageSize);
+
+        var cards = await query
+            .Page(page, pageSize)
+            .OrderByDescending(u => u.EklenmeTarihi)
+            .AsUrunCardVMs()
+            .ToListAsync();
 
         return new()
         {
             Object = new()
             {
+                Items = cards,
                 AramaMetni = metin,
-                Items = result.Object!,
                 CurrentPage = page,
-                PageSize = pageSize
+                PageSize = pageSize,
+                LastPage = lastPage
             }
         };
     }
@@ -364,7 +410,7 @@ public class MagazaManager
             LineItems = new(),
             PaymentMethodTypes = new() { "card" },
             Mode = "payment",
-            CancelUrl = $"{domain}/Magaza/Sepet"
+            CancelUrl = $"{domain}/Kullanici/Siparisler"
         };
 
         foreach (var item in sepetSession.Items)

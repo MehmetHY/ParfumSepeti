@@ -11,15 +11,23 @@ public class KategoriManager : Manager<Kategori>
     {
     }
 
-    public async Task<KategoriListeleVM> GetListeleVMAsync(int page = 1,
-                                                           int pageSize = 20)
+    public async Task<Result<KategoriListeleVM>> GetListeleVMAsync(int page = 1,
+                                                                   int pageSize = 20)
     {
-        var model = new KategoriListeleVM();
+        if (!await _set.ValidPageAsync(page, pageSize))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçersiz sayfa" }
+            };
 
-        var items = await GetQueryable(include: k => k.Urunler,
-                                       tracked: false,
-                                       pageSize: pageSize,
-                                       page: page)
+        var lastPage = await _set.PageCountAsync(pageSize);
+
+        var items = await _set
+            .AsNoTracking()
+            .Include(k => k.Urunler)
+            .Page(page, pageSize)
             .Select(k => new KategoriListeleItem
             {
                 Id = k.Id,
@@ -30,9 +38,13 @@ public class KategoriManager : Manager<Kategori>
 
         return new()
         {
-            CurrentPage = page,
-            Items = items,
-            PageSize = pageSize
+            Object = new()
+            {
+                Items = items,
+                CurrentPage = page,
+                PageSize = pageSize,
+                LastPage = lastPage
+            }
         };
     }
 

@@ -30,18 +30,21 @@ public class UrunManager : Manager<Urun>
     public async Task<Result<UrunListeleVM>> GetListeleVMAsync(int page = 1,
                                                                int pageSize = 20)
     {
-        if (!await ValidPage(page, pageSize))
+        var query = _set.AsNoTracking();
+
+        if (!await query.ValidPageAsync(page, pageSize))
             return new()
             {
                 Success = false,
                 Errors = { "Geçersiz sayfa" }
             };
 
-        var items = await GetQueryable(_set.OrderByDescending(u => u.EklenmeTarihi),
-                                       include: u => u.Kategori,
-                                       tracked: false,
-                                       pageSize: pageSize,
-                                       page: page)
+        var lastPage = await query.PageCountAsync(pageSize);
+
+        var items = await query
+            .OrderByDescending(u => u.EklenmeTarihi)
+            .Page(page, pageSize)
+            .Include(u => u.Kategori)
             .Select(u => new UrunListeleItem
             {
                 Id = u.Id,
@@ -60,7 +63,8 @@ public class UrunManager : Manager<Urun>
             {
                 Items = items,
                 CurrentPage = page,
-                PageSize = pageSize
+                PageSize = pageSize,
+                LastPage = lastPage
             }
         };
     }
@@ -315,115 +319,4 @@ public class UrunManager : Manager<Urun>
         .OrderByDescending(u => u.EklenmeTarihi)
         .Take(count)
         .ToListAsync();
-
-    public async Task<Result<List<UrunCardVM>>> GetKategoriUrunCardsAsync(
-        int id,
-        int page = 1,
-        int pageSize = 20
-    )
-    {
-        if (!await _set.ValidPageAsync(page, pageSize))
-            return new()
-            {
-                Success = false,
-                Fatal = true,
-                Errors = { "Geçersiz sayfa" }
-            };
-
-        var cards = await _set
-            .Where(u => u.KategoriId == id)
-            .AsNoTracking()
-            .OrderByDescending(u => u.EklenmeTarihi)
-            .Page(page, pageSize)
-            .Include(u => u.Kategori)
-            .AsUrunCardVMs()
-            .ToListAsync();
-
-        return new()
-        {
-            Object = cards
-        };
-    }
-
-    public async Task<Result<List<UrunCardVM>>> GetYeniUrunCardsAsync(
-        int page = 1,
-        int pageSize = 20
-    )
-    {
-        if (!await _set.ValidPageAsync(page, pageSize))
-            return new()
-            {
-                Success = false,
-                Fatal = true,
-                Errors = { "Geçersiz sayfa" }
-            };
-
-        var cards = await _set
-            .AsNoTracking()
-            .OrderByDescending(u => u.EklenmeTarihi)
-            .Page(page, pageSize)
-            .Include(u => u.Kategori)
-            .AsUrunCardVMs()
-            .ToListAsync();
-
-        return new()
-        {
-            Object = cards
-        };
-    }
-
-    public async Task<Result<List<UrunCardVM>>> GetIndirimliUrunCardsAsync(
-        int page = 1,
-        int pageSize = 20
-    )
-    {
-        if (!await _set.ValidPageAsync(page, pageSize))
-            return new()
-            {
-                Success = false,
-                Fatal = true,
-                Errors = { "Geçersiz sayfa" }
-            };
-
-        var cards = await _set
-            .Where(u => u.IndirimYuzdesi > 0)
-            .AsNoTracking()
-            .OrderByDescending(u => u.EklenmeTarihi)
-            .Page(page, pageSize)
-            .Include(u => u.Kategori)
-            .AsUrunCardVMs()
-            .ToListAsync();
-
-        return new()
-        {
-            Object = cards
-        };
-    }
-
-    public async Task<Result<List<UrunCardVM>>> GetAramaUrunCards(
-        string metin,
-        int page = 1,
-        int pageSize = 20
-    )
-    {
-        var query = _set.AsNoTracking().Where(u => u.Baslik.Contains(metin));
-
-        if (!await query.ValidPageAsync(page, pageSize))
-            return new()
-            {
-                Success = false,
-                Fatal = true,
-                Errors = { "Geçersiz sayfa" }
-            };
-
-        var cards = await query
-            .Page(page, pageSize)
-            .AsUrunCardVMs()
-            .ToListAsync();
-
-        return new()
-        {
-            Object = cards
-        };
-    }
 }

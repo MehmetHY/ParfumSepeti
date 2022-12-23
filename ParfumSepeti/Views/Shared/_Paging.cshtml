@@ -1,0 +1,55 @@
+﻿@model PagedVM
+
+@{
+    var lastPage = Model.LastPage;
+    var pageSize = Model.PageSize;
+}
+
+@if (lastPage > 1)
+{
+    var nextPage = Model.CurrentPage + 1;
+    var prevPage = Model.CurrentPage - 1;
+
+    var showFirstPageButton = Model.CurrentPage > 2;
+    var showPreviousPageButton = Model.CurrentPage > 1;
+    var showNextPageButton = Model.CurrentPage < lastPage;
+    var showLastPageButton = Model.CurrentPage < (lastPage - 1);
+
+    var path = Context.Request.Path;
+
+    var query = Context.Request.Query
+        .Where(q => q.Key.ToLower() != "page" && q.Key.ToLower() != "pagesize")
+        .ToList();
+
+    <div class="panel hbox jc-c ai-c as-c gap8 p12">
+        @if (showFirstPageButton)
+        {
+            var href = Model.GetQueryString(path, query, 1, pageSize);
+
+            <a class="fa fa-angles-left btn2 p8" href="@href"></a>
+        }
+
+        @if (showPreviousPageButton)
+        {
+            var href = Model.GetQueryString(path, query, prevPage, pageSize);
+
+            <a class="fa fa-angle-left btn2 p8" href="@href"></a>
+        }
+
+        <span class="text-xl ph12">@Model.CurrentPage</span>
+
+        @if (showNextPageButton)
+        {
+            var href = Model.GetQueryString(path, query, nextPage, pageSize);
+
+            <a class="fa fa-angle-right btn2 p8" href="@href"></a>
+        }
+
+        @if (showLastPageButton)
+        {
+            var href = Model.GetQueryString(path, query, lastPage, pageSize);
+
+            <a class="fa fa-angles-right btn2 p8" href="@href"></a>
+        }
+    </div>
+}

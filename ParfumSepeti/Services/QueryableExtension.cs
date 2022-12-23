@@ -50,6 +50,34 @@ public static class QueryableExtension
         return page <= pageCount;
     }
 
+    public static async Task<int> PageCountAsync<TEntity>(
+        this IQueryable<TEntity> query,
+        int pageSize
+    )
+    {
+        var entityCount = await query.CountAsync();
+        var pageCount = entityCount / pageSize;
+
+        if (pageCount == 0 || entityCount % pageSize != 0)
+            ++pageCount;
+
+        return pageCount;
+    }
+
+    public static int PageCount<TEntity>(
+        this IEnumerable<TEntity> entities,
+        int pageSize
+    )
+    {
+        var entityCount = entities.Count();
+        var pageCount = entityCount / pageSize;
+
+        if (pageCount == 0 || entityCount % pageSize != 0)
+            ++pageCount;
+
+        return pageCount;
+    }
+
     public static TResult? Reduce<TEntity, TResult>(
         this IEnumerable<TEntity> entities,
         Func<TEntity, TResult?, TResult?> callback,

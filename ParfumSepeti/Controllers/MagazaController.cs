@@ -22,9 +22,9 @@ public class MagazaController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Kategori(int id, int page = 1, int pagaSize = 20)
+    public async Task<IActionResult> Kategori(int id, int page = 1, int pageSize = 20)
     {
-        var result = await _magazaManager.GetKategoriVMAsync(id, page, pagaSize);
+        var result = await _magazaManager.GetKategoriVMAsync(id, page, pageSize);
 
         if (result.Success)
             return View(result.Object);

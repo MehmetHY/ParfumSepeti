@@ -13,17 +13,35 @@ public class SiparisManager : Manager<Siparis>
     {
     }
 
-    public async Task<AdminSiparisListeleVM> GetListeleVMAsync()
+    public async Task<Result<AdminSiparisListeleVM>> GetListeleVMAsync(int page = 1,
+                                                               int pageSize = 20)
     {
-        var siparislerDb = await _set
+        var query = _set.AsNoTracking();
+
+        if (!await query.ValidPageAsync(page, pageSize))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçeriz sayfa" }
+            };
+
+        var lastPage = await query.PageCountAsync(pageSize);
+
+        var siparislerDb = await query
             .AsNoTracking()
             .Include(s => s.Ogeler)
             .Include(s => s.Kullanici)
-            .OrderByDescending(s => s.OlusturmaTarihi)
             .ToListAsync();
 
+        siparislerDb = siparislerDb
+            .OrderBy(s => s.OdemeDurumu, new SiparisOdemeComparer())
+            .ThenBy(s => s.KargoDurumu, new SiparisKargoComparer())
+            .ThenByDescending(s => s.OlusturmaTarihi)
+            .Page(page, pageSize)
+            .ToList();
+
         var siparisler = new List<AdminSiparisListeleVM.Siparis>();
-        var onemliSiparisler = new List<AdminSiparisListeleVM.Siparis>();
 
         foreach (var siparisDb in siparislerDb)
         {
@@ -49,22 +67,18 @@ public class SiparisManager : Manager<Siparis>
                     .ToString("F2")
             };
 
-            if (siparisDb.OdemeDurumu == OdemeDurumu.ODENDI &&
-                siparisDb.KargoDurumu == KargoDurumu.GONDERILMEDI)
-            {
-                onemliSiparisler.Add(siparis);
-            }
-            else
-            {
-                siparisler.Add(siparis);
-            }
+            siparisler.Add(siparis);
         }
-
-        onemliSiparisler.AddRange(siparisler);
 
         return new()
         {
-            Siparisler = onemliSiparisler
+            Object = new()
+            {
+                Items = siparisler,
+                CurrentPage = page,
+                PageSize = pageSize,
+                LastPage = lastPage
+            }
         };
     }
 

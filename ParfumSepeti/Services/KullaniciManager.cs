@@ -31,11 +31,16 @@ public class KullaniciManager : Manager<Kullanici>
         var admins = await _userManager.GetUsersInRoleAsync("admin");
         var adminIds = admins.Select(a => a.Id);
 
-        var items = await GetQueryable(filter: u => !adminIds.Contains(u.Id),
-                                       tracked: false,
-                                       include: u => u.Siparisler,
-                                       page: page,
-                                       pageSize: pageSize)
+        var query = _set
+            .AsNoTracking()
+            .OrderBy(k => k.UserName)
+            .Include(k => k.Siparisler)
+            .Where(k => !adminIds.Contains(k.Id));
+
+        var pageCount = await query.PageCountAsync(pageSize);
+
+        var items = await query
+            .Page(page, pageSize)
             .Select(u => new KullaniciListeleItem
             {
                 Id = u.Id,
@@ -53,7 +58,8 @@ public class KullaniciManager : Manager<Kullanici>
             {
                 Items = items,
                 CurrentPage = page,
-                PageSize = pageSize
+                PageSize = pageSize,
+                LastPage = pageCount
             }
         };
     }
@@ -225,13 +231,16 @@ public class KullaniciManager : Manager<Kullanici>
             .Page(page, pageSize)
             .AsUrunCardVMs();
 
+        var lastPage = kullanici.IstekListesi.PageCount(pageSize);
+
         return new()
         {
             Object = new()
             {
                 Items = cards,
                 CurrentPage = page,
-                PageSize = pageSize
+                PageSize = pageSize,
+                LastPage = lastPage
             }
         };
     }
@@ -298,7 +307,10 @@ public class KullaniciManager : Manager<Kullanici>
         await _db.SaveChangesAsync();
     }
 
-    public async Task<Result<KullaniciSiparisleriVM>> GetSiparislerVM(string? kullaniciAdi)
+    public async Task<Result<KullaniciSiparisleriVM>> GetSiparislerVM(
+        string? kullaniciAdi,
+        int page = 1,
+        int pageSize = 20)
     {
         if (string.IsNullOrWhiteSpace(kullaniciAdi))
             return new()
@@ -322,9 +334,22 @@ public class KullaniciManager : Manager<Kullanici>
                 Errors = { "Geçeriz kullanıcı" }
             };
 
+        if (!kullanici.Siparisler.ValidPage(page, pageSize))
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Geçeriz sayfa" }
+            };
+
         var vm = new KullaniciSiparisleriVM();
 
-        foreach (var siparis in kullanici.Siparisler)
+        var siparisler = kullanici.Siparisler
+            .OrderByDescending(u => u.OlusturmaTarihi)
+            .Page(page, pageSize)
+            .ToList();
+
+        foreach (var siparis in siparisler)
         {
             var ogeler = siparis.Ogeler
                 .Select(o => new KullaniciSiparisleriVM.SiparisItem.Oge
@@ -348,6 +373,9 @@ public class KullaniciManager : Manager<Kullanici>
             };
 
             vm.Items.Add(item);
+            vm.CurrentPage = page;
+            vm.PageSize = pageSize;
+            vm.LastPage = kullanici.Siparisler.PageCount(pageSize);
         }
 
         return new()
