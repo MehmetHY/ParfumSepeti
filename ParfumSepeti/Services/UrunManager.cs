@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using ParfumSepeti.Data;
 using ParfumSepeti.Models;
 using ParfumSepeti.ViewModels;

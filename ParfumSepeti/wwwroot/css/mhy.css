@@ -32,6 +32,8 @@
     --border-input: 2px solid var(--disabled);
     --border-input-focus: 2px solid var(--normal);
     --shadow-bottom-large: 0 4px 20px #00000080;
+    --shadow-top-large: 0 -4px 20px #00000080;
+    --shadow-large: 0 0 20px 0 #00000080;
 }
 
 * {
@@ -256,19 +258,23 @@ a.btn-primary, a.btn-success, a.btn-danger, a.btn2, a.btn2-primary, a.btn2-succe
     border: 2px solid var(--primary);
     color: var(--primary);
 }
-.btn2-primary:hover {
-    background-color: var(--primary);
-    color: var(--primary-contrast);
-}
+
+    .btn2-primary:hover {
+        background-color: var(--primary);
+        color: var(--primary-contrast);
+    }
+
 .btn2-success {
     background-color: transparent;
     border: 2px solid var(--success);
     color: var(--success);
 }
+
     .btn2-success:hover {
         background-color: var(--success);
         color: var(--success-contrast);
     }
+
 .btn2-danger {
     background-color: transparent;
     border: 2px solid var(--danger);
@@ -376,6 +382,10 @@ a.btn-primary, a.btn-success, a.btn-danger, a.btn2, a.btn2-primary, a.btn2-succe
     white-space: nowrap;
 }
 
+.weightnormal {
+    font-weight: normal;
+}
+
 .bold {
     font-weight: bold;
 }
@@ -440,6 +450,14 @@ a.btn-primary, a.btn-success, a.btn-danger, a.btn2, a.btn2-primary, a.btn2-succe
 
 .shadow-b-l {
     box-shadow: var(--shadow-bottom-large);
+}
+
+.shadow-t-l {
+    box-shadow: var(--shadow-top-large);
+}
+
+.shadow-l {
+    box-shadow: var(--shadow-large);
 }
 /* --------------------------------------------------------- */
 /* FORM */
@@ -581,6 +599,10 @@ a.btn-primary, a.btn-success, a.btn-danger, a.btn2, a.btn2-primary, a.btn2-succe
 /* --------------------------------------------------------- */
 .of-hide {
     overflow: hidden;
+}
+
+.zindex1 {
+    z-index: 1;
 }
 
 .pos-a {
@@ -1598,3 +1620,44 @@ a.btn-primary, a.btn-success, a.btn-danger, a.btn2, a.btn2-primary, a.btn2-succe
         order: -999;
     }
 }
+/* --------------------------------------------------------- */
+/* DROPDOWN */
+/* --------------------------------------------------------- */
+.dropdown {
+    position: relative;
+}
+
+    .dropdown .menu {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 120ms linear;
+    }
+
+    .dropdown:focus .menu, .dropdown:focus-within .menu {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .dropdown .menu.top {
+        top: 100%;
+    }
+
+    .dropdown > .menu.right {
+        right: 0;
+    }
+
+    .dropdown .link {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+        .dropdown .link:hover {
+            background-color: var(--normal);
+            color: var(--normal-contrast);
+        }
+
+            .dropdown .link:hover * {
+                color: var(--normal-contrast);
+            }

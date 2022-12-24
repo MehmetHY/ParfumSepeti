@@ -21,7 +21,7 @@
         .Where(q => q.Key.ToLower() != "page" && q.Key.ToLower() != "pagesize")
         .ToList();
 
-    <div class="panel hbox jc-c ai-c as-c gap8 p12">
+    <div class="panel shadow-l hbox jc-c ai-c as-c gap8 p12">
         @if (showFirstPageButton)
         {
             var href = Model.GetQueryString(path, query, 1, pageSize);

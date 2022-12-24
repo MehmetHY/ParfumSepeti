@@ -1,8 +1,18 @@
 ﻿@model UrunListeleVM
 
-<div class="panel p64-r vbox gap36 as-s">
-    <a asp-action="Olustur" class="btn-flat as-start">Yeni Ürün Oluştur</a>
-    <h1 class="m0 text-center">Ürünler</h1>
+<div class="panel shadow-l p64-r vbox gap36 as-s">
+    <div class="hbox jc-sb gap12">
+        <div>
+            <a asp-action="Panel" asp-controller="Admin" class="fa fa-arrow-left text-xxl bold ph12 pv8 btn2"></a>
+        </div>
+
+        <h1 class="m0 text-center">Ürünler</h1>
+
+        <div>
+            <a asp-action="Olustur" class="fa fa-plus btn2-success text-xxl bold ph12 pv8"></a>
+        </div>
+    </div>
+    
     <table class="table panel p16">
         <thead>
             <tr>
