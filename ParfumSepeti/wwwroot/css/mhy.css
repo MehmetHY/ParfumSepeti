@@ -728,7 +728,9 @@ a.btn-primary, a.btn-success, a.btn-danger, a.btn2, a.btn2-primary, a.btn2-succe
 .h100p {
     height: 100%;
 }
-
+.w50p-r800 {
+    width: 50%;
+}
 .p0 {
     padding: 0;
 }
@@ -1249,6 +1251,9 @@ a.btn-primary, a.btn-success, a.btn-danger, a.btn2, a.btn2-primary, a.btn2-succe
 }
 
 @media screen and (max-width: 800px) {
+    .w50p-r800 {
+        width: 100%;
+    }
     .m4-r {
         margin: 2px;
     }

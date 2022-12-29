@@ -4,6 +4,7 @@ using ParfumSepeti.Data;
 using ParfumSepeti.Models;
 using ParfumSepeti.ViewModels;
 using Stripe.Checkout;
+using System.Net.Sockets;
 
 namespace ParfumSepeti.Services;
 
@@ -478,27 +479,39 @@ public class MagazaManager
             PostaKodu = vm.PostaKodu
         };
 
-        await _db.Siparis.AddAsync(siparis);
-        await _db.SaveChangesAsync();
-
-        stripeOptions.SuccessUrl =
-            $"{domain}/Magaza/SiparisOnayla?siparisId={siparis.Id}";
-
-        var stripeService = new SessionService();
-        var stripeSession = await stripeService.CreateAsync(stripeOptions);
-
-        siparis.SessionId = stripeSession.Id;
-        siparis.OdemeIntentId = stripeSession.PaymentIntentId;
-        await _db.SaveChangesAsync();
-
-        return new()
+        try
         {
-            Object = new()
+            await _db.Siparis.AddAsync(siparis);
+            await _db.SaveChangesAsync();
+
+            stripeOptions.SuccessUrl =
+                $"{domain}/Magaza/SiparisOnayla?siparisId={siparis.Id}";
+
+            var stripeService = new SessionService();
+            var stripeSession = await stripeService.CreateAsync(stripeOptions);
+
+            siparis.SessionId = stripeSession.Id;
+            siparis.OdemeIntentId = stripeSession.PaymentIntentId;
+            await _db.SaveChangesAsync();
+
+            return new()
             {
-                SiparisId = siparis.Id,
-                OdemeUrl = stripeSession.Url
-            }
-        };
+                Object = new()
+                {
+                    SiparisId = siparis.Id,
+                    OdemeUrl = stripeSession.Url
+                }
+            };
+        }
+        catch (Exception)
+        {
+            return new()
+            {
+                Success = false,
+                Fatal = true,
+                Errors = { "Stripe ile bağlantı kurulamadı" }
+            };
+        }
     }
 
     public bool SepetValid(ISession session)

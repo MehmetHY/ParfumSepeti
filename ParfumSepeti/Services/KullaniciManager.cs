@@ -5,6 +5,7 @@ using ParfumSepeti.Data;
 using ParfumSepeti.Models;
 using ParfumSepeti.ViewModels;
 using Stripe.Checkout;
+using System.Net.Sockets;
 
 namespace ParfumSepeti.Services;
 
@@ -696,20 +697,32 @@ public class KullaniciManager : Manager<Kullanici>
                 Errors = { "Sipariş zaten ödendi" }
             };
 
-        var stripeService = new SessionService();
-        var stripeSession = await stripeService.GetAsync(siparis.SessionId);
+        try
+        {
+            var stripeService = new SessionService();
+            var stripeSession = await stripeService.GetAsync(siparis.SessionId);
 
-        if (stripeSession == null)
+            if (stripeSession == null)
+                return new()
+                {
+                    Success = false,
+                    Fatal = true,
+                    Errors = { "Servis hatası ya da geçersiz sipariş" }
+                };
+
+            return new()
+            {
+                Object = stripeSession.Url
+            };
+        }
+        catch (Exception)
+        {
             return new()
             {
                 Success = false,
                 Fatal = true,
-                Errors = { "Servis hatası ya da geçersiz sipariş" }
+                Errors = { "Stripe ile bağlantı kurulamadı" }
             };
-
-        return new()
-        {
-            Object = stripeSession.Url
-        };
+        }
     }
 }

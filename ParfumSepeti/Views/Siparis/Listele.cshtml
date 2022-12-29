@@ -37,10 +37,10 @@
 
                             @foreach (var oge in siparis.Ogeler)
                             {
-                                <div class="hbox jc-sb">
+                                <div class="hbox jc-sb gap12">
                                     <span class="bold">@oge.UrunIsmi</span>
                                     <div class="hbox gap12 ai-c">
-                                        <span>@oge.Fiyat.ToString("F2") TL</span>
+                                        <span class="text-nowrap">@oge.Fiyat.ToString("F2") TL</span>
                                         <span class="fa fa-multiply"></span>
                                         <span>@oge.Adet</span>
                                     </div>

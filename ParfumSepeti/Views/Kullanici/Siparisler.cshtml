@@ -19,14 +19,14 @@
             {
                 <tr>
                     <td class="w90p">
-                        <div class="vbox gap16 p12">
+                        <div class="vbox gap24 p12">
 
                             @foreach (var oge in item.Ogeler)
                             {
-                                <div class="hbox jc-sb">
-                                    <span class="bold">@oge.UrunIsmi</span>
+                                <div class="hbox jc-sb gap12">
+                                    <span class="">@oge.UrunIsmi</span>
                                     <div class="hbox gap12 ai-c">
-                                        <span>@oge.Fiyat.ToString("F2") TL</span>
+                                        <span class="text-nowrap">@oge.Fiyat.ToString("F2") TL</span>
                                         <span class="fa fa-multiply"></span>
                                         <span>@oge.Adet</span>
                                     </div>
